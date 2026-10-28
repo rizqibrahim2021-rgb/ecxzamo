@@ -1,0 +1,2820 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرخصة المهنية عام — اختبار تفاعلي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Almarai:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', 'Almarai', sans-serif;
+        }
+
+        body {
+            background-color: #0b1329;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* شريط التحكم الشامل: التنقل + التصدير */
+        .main-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #111936;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid #1f2d5a;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-ctrl {
+            border: none;
+            padding: 9px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .btn-nav { background: #1e3a8a; }
+        .btn-nav:hover { background: #2563eb; }
+        .btn-nav:disabled { background: #334155; cursor: not-allowed; opacity: 0.6; }
+
+        .btn-pdf { background: #0284c7; }
+        .btn-pdf:hover { background: #0369a1; }
+
+        .btn-img { background: #10b981; }
+        .btn-img:hover { background: #059669; }
+
+        .divider {
+            width: 1px;
+            height: 25px;
+            background: #334155;
+            margin: 0 5px;
+        }
+
+        #quiz-app {
+            width: 100%;
+            max-width: 960px;
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            border: 4px solid #0f2c59;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .top-header {
+            background: radial-gradient(circle at center, #103b70 0%, #081d3d 100%);
+            padding: 15px 30px 20px 30px;
+            color: #ffffff;
+            border-bottom: 5px solid #38bdf8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .header-center { text-align: center; }
+
+        .main-title {
+            font-size: 34px;
+            font-weight: 900;
+            color: #ffffff;
+            line-height: 1.2;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .sub-title {
+            color: #38bdf8;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 2px 0;
+        }
+
+        .author-name {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .header-icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 8px;
+            width: 100%;
+        }
+
+        .progress-bar {
+            background: #10b981;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 35px 0 35px;
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f2c59;
+        }
+
+        .card-body {
+            padding: 15px 35px 25px 35px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .question-card-container {
+            background: #ffffff;
+            border: 2.5px solid #0f2c59;
+            border-radius: 16px;
+            padding: 15px 20px;
+            box-shadow: 0 6px 15px rgba(15, 44, 89, 0.06);
+        }
+
+        .question-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .badge-q-tag {
+            background: #0f2c59;
+            color: #ffffff;
+            padding: 5px 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .q-text-content {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: right;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: #0284c7;
+            background: #f0f9ff;
+            transform: translateY(-2px);
+        }
+
+        .opt-letter {
+            width: 32px;
+            height: 32px;
+            background: #e2e8f0;
+            color: #0f2c59;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .opt-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            flex-grow: 1;
+            padding: 0 12px;
+        }
+
+        .option-btn.correct {
+            background: #ecfdf5 !important;
+            border-color: #10b981 !important;
+        }
+        .option-btn.correct .opt-letter {
+            background: #10b981 !important;
+            color: #ffffff !important;
+        }
+
+        .option-btn.wrong {
+            background: #fef2f2 !important;
+            border-color: #ef4444 !important;
+        }
+        .option-btn.wrong .opt-letter {
+            background: #ef4444 !important;
+            color: #ffffff !important;
+        }
+
+        .bottom-footer {
+            background: linear-gradient(115deg, #07172f 0%, #122d50 51%, #07172f 100%);
+            border-top: 4px solid #d4af37;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .footer-sec {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-sec-center { text-align: center; padding: 6px 18px; border-left: 1px solid rgba(212,175,55,.35); border-right: 1px solid rgba(212,175,55,.35); }
+        .footer-owner { font-size: 17px; font-weight: 900; color: #f6d77e; text-shadow: 0 1px 2px rgba(0,0,0,.2); }
+
+        .footer-icon-circle {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(145deg, #fff1b7 0%, #d4af37 55%, #a77c20 100%);
+            border: 1.5px solid #ffe4a3;
+            box-shadow: 0 2px 10px rgba(212,175,55,0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .footer-text-title {
+            font-size: 11px;
+            color: #f0d58a;
+            font-weight: 700;
+        }
+
+        .footer-text-val {
+            font-size: 14px;
+            font-weight: 800;
+            direction: ltr;
+            color: #fff9e8;
+        }
+        .bottom-footer a.footer-text-val:hover { color: #f6d77e; text-decoration: underline !important; }
+        @media (max-width: 620px) {
+            .bottom-footer { gap: 14px; flex-wrap: wrap; justify-content: center; padding: 15px; }
+            .footer-sec-center { order: -1; width: 100%; border-left: 0; border-right: 0; border-bottom: 1px solid rgba(212,175,55,.3); padding-bottom: 10px; }
+            .footer-text-val { font-size: 12px; }
+        }
+
+        #result-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .result-score {
+            font-size: 48px;
+            font-weight: 900;
+            color: #10b981;
+            margin: 15px 0;
+        }
+
+        .btn-restart {
+            background: #0f2c59;
+            color: #ffffff;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        @media print {
+            body { background: none; padding: 0; }
+            .main-controls, .progress-bar-container, .status-row { display: none !important; }
+            #quiz-app { box-shadow: none; border: 2px solid #0f2c59; max-width: 100%; }
+        }
+
+        /* واجهة مشاركة حديثة مستوحاة من القالب المرجعي */
+        :root { --gold:#d4af37; --gold-soft:#f7e4a2; --navy:#071b38; }
+        body { background:radial-gradient(ellipse at 50% 0%,#19365e 0%,#08142a 58%,#050c1b 100%); }
+        .main-controls {max-width:980px;border:1px solid #b99644;border-radius:22px;background:linear-gradient(130deg,#101e39,#0c1730);box-shadow:0 16px 40px #0006;padding:15px;gap:9px;}
+        .btn-ctrl {border-radius:12px;min-height:44px;box-shadow:inset 0 1px #ffffff25;}
+        .btn-ctrl:focus-visible,.share-action:focus-visible {outline:3px solid #f9d67f;outline-offset:3px;}
+        .btn-share-wa {background:linear-gradient(125deg,#128c50,#25d366);}
+        .btn-share-tg {background:linear-gradient(125deg,#1479a8,#2aabee);}
+        .btn-share-img {background:linear-gradient(125deg,#78571b,#b88d35);border:1px solid #f6d77e;}
+        #quiz-app {border-color:#b59649;box-shadow:0 25px 65px #0009;}
+        .top-header {border-bottom-color:var(--gold);}
+        .main-title {text-shadow:0 3px 14px #0005;}
+        .question-card-container {border-color:#b9974d;box-shadow:0 6px 20px #9e792018;}
+        .badge-q-tag {background:linear-gradient(125deg,#081b38,#173f6d);border:1px solid var(--gold);color:#ffe6a0;}
+        .bottom-footer {border-top-color:var(--gold);}
+        .share-strip {width:min(960px,100%);margin:0 auto 18px;background:#0f2242;border:1px solid #a98b47;border-radius:18px;padding:14px 18px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;color:#f5e5b6;box-shadow:0 10px 28px #0004;}
+        .share-strip strong {font-weight:900;font-size:14px;}
+        .share-action {color:white;border:0;border-radius:12px;padding:10px 18px;font:800 14px Cairo, sans-serif;cursor:pointer;}
+        .share-action.wa {background:#138d56}.share-action.tg {background:#218fc5}.share-action.img {background:#9a712c}.share-action.copy,.btn-copy {background:linear-gradient(120deg,#8a631d,#ba903f);color:white;border:1px solid #e4bb61}
+        #share-feedback {width:100%;text-align:center;font-size:12px;color:#ffdd8e;min-height:1em;}
+        @media(max-width:650px){.main-controls{border-radius:17px}.btn-ctrl{flex:1 1 140px;justify-content:center}.share-strip{padding:12px}.share-action{flex:1 1 130px}.q-text-content{font-size:17px}.options-grid{grid-template-columns:1fr}.top-header{padding:14px 10px}.main-title{font-size:24px}.bottom-footer{overflow-wrap:anywhere}}
+        .option-btn.correct .opt-text::after { content:"  ✅"; font-size:21px; }
+
+        .btn-pro { background: linear-gradient(135deg,#6d28d9,#0ea5e9); border: 1px solid rgba(255,255,255,.18); }
+        .btn-pro:hover { filter: brightness(1.08); }
+        .btn-pro.active { background: linear-gradient(135deg,#4c1d95,#0369a1); box-shadow: 0 0 0 2px rgba(234,203,120,.35) inset; }
+
+        #pro-student-screen { display:none; padding: 16px 34px 28px; }
+        .student-hero {
+            background: linear-gradient(135deg, #0b2548 0%, #113c70 60%, #0a2342 100%);
+            border: 2px solid #d4af37;
+            border-radius: 22px;
+            padding: 18px 20px;
+            color: #fff;
+            box-shadow: 0 18px 35px rgba(11,37,72,.18);
+            margin-bottom: 16px;
+        }
+        .student-hero-top { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
+        .student-hero-title { font-size: 24px; font-weight: 900; color:#fff; }
+        .student-hero-sub { font-size: 14px; color:#f8dd96; font-weight:800; margin-top:4px; }
+        .student-hero-badge { background: linear-gradient(135deg,#f7d87b,#c59222); color:#10243f; border-radius:999px; padding:10px 16px; font-size:13px; font-weight:900; box-shadow:0 6px 15px rgba(212,175,55,.25); }
+        .student-q-card {
+            background: linear-gradient(180deg,#ffffff 0%, #f7fbff 100%);
+            border: 2px solid #cae3fb;
+            border-right: 8px solid #d4af37;
+            border-radius: 22px;
+            padding: 22px 24px;
+            margin-bottom: 14px;
+            box-shadow: 0 8px 22px rgba(12,74,124,.08);
+        }
+        .student-q-head { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:12px; flex-wrap:wrap; }
+        .student-kicker { color:#0c4a7c; font-size:14px; font-weight:900; }
+        .student-q-badge {
+            background: linear-gradient(135deg,#0f2c59,#1d4f91);
+            color:#f3d47a; border:1.5px solid #d4af37; border-radius:999px;
+            padding:8px 16px; font-size:14px; font-weight:900;
+        }
+        .student-q-text { color:#0f172a; font-size:28px; line-height:1.8; font-weight:900; }
+        .student-options-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+        .student-option {
+            position:relative;
+            background: linear-gradient(180deg,#ffffff 0%, #f8fbff 100%);
+            border:2px solid #d7e6f5;
+            border-radius:20px;
+            padding:16px 18px 16px 18px;
+            cursor:pointer;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+            display:flex; align-items:flex-start; gap:14px;
+            min-height: 92px;
+            box-shadow: 0 6px 18px rgba(15,44,89,.06);
+        }
+        .student-option:hover:not([disabled]) { transform: translateY(-3px); border-color:#72b0e3; box-shadow:0 12px 25px rgba(15,44,89,.10); }
+        .student-option[disabled] { cursor: default; }
+        .student-option-letter {
+            width:42px;height:42px;flex:0 0 42px;border-radius:14px;
+            background:linear-gradient(135deg,#eef4fa,#d9e8f6); color:#0f2c59;
+            display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;
+            border:1px solid #c5d8ea;
+        }
+        .student-option-text { flex:1; color:#1e293b; font-size:18px; line-height:1.75; font-weight:800; }
+        .student-option.correct { border-color:#0e9f6e !important; background:linear-gradient(180deg,#f0fdf7,#e8fff4); }
+        .student-option.correct .student-option-letter { background:linear-gradient(135deg,#16a34a,#059669); color:#fff; border-color:#0b8a59; }
+        .student-option.correct::after {
+            content:'✅ الإجابة الصحيحة'; position:absolute; top:10px; left:12px;
+            background:#0f9f6c; color:#fff; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:900;
+        }
+        .student-option.wrong { border-color:#ef4444 !important; background:linear-gradient(180deg,#fff5f5,#fff0f0); }
+        .student-option.wrong .student-option-letter { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; border-color:#c81f1f; }
+        .student-action-row { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:16px 0 12px; }
+        .student-action-btn {
+            border:0; border-radius:16px; padding:12px 18px; cursor:pointer; color:#fff;
+            font: 900 14px Cairo, sans-serif; box-shadow:0 10px 18px rgba(15,44,89,.12);
+        }
+        .student-action-btn.copy { background:linear-gradient(135deg,#8a631d,#c49328); }
+        .student-action-btn.share { background:linear-gradient(135deg,#0f766e,#0ea5a3); }
+        .student-action-btn.answer { background:linear-gradient(135deg,#1d4ed8,#2563eb); }
+        .student-action-btn.image { background:linear-gradient(135deg,#7c3aed,#a855f7); }
+        .student-encourage {
+            background: linear-gradient(135deg,#fff8e4 0%, #fff4d5 100%);
+            border: 1px solid #efcf72;
+            color:#6b4f12;
+            border-radius:18px;
+            padding:14px 18px;
+            font-size:16px;
+            font-weight:900;
+            text-align:center;
+            box-shadow:0 8px 18px rgba(197,146,34,.08);
+        }
+        .student-encourage.success { background:linear-gradient(135deg,#e9fff4 0%,#dcfce7 100%); border-color:#75d2a6; color:#065f46; }
+        .student-encourage.retry { background:linear-gradient(135deg,#fff5f5 0%,#fef2f2 100%); border-color:#f3a1a1; color:#991b1b; }
+        .student-copy-feedback { text-align:center; font-size:12px; color:#7a6329; min-height:1em; margin-top:6px; font-weight:800; }
+        @media(max-width:800px){ .student-options-grid{grid-template-columns:1fr;} .student-q-text{font-size:23px;} }
+        @media(max-width:650px){ #pro-student-screen{padding:14px 14px 24px;} .student-hero-title{font-size:20px} .student-q-text{font-size:20px} .student-option-text{font-size:16px;} }
+
+        @media print {.share-strip{display:none!important}}
+    /* ===== Professional PDF export styled like the supplied reference ===== */
+#pdf-export-root { display:none; }
+.pdf-export-root, .pdf-export-root * { box-sizing:border-box; font-family:'Cairo','Almarai',sans-serif; }
+.pdf-export-root { direction:rtl; }
+
+@page { size:A4 portrait; margin:6mm; }
+
+@media print {
+    html, body {
+        background:#ffffff !important;
+        margin:0 !important;
+        padding:0 !important;
+        min-height:auto !important;
+        display:block !important;
+    }
+    body > *:not(#pdf-export-root) { display:none !important; }
+    #pdf-export-root { display:block !important; }
+    #pdf-export-root .pdf-page {
+        width:198mm;
+        min-height:285mm;
+        margin:0 auto 4mm;
+        page-break-after:always;
+        break-after:page;
+        overflow:hidden;
+        background:#ffffff;
+        border:1.2px solid #9ab9d6;
+        position:relative;
+    }
+    #pdf-export-root .pdf-page:last-child {
+        page-break-after:auto;
+        break-after:auto;
+    }
+}
+
+.pdf-page {
+    display:flex;
+    flex-direction:column;
+    padding:0;
+}
+
+.pdf-topbar {
+    background:linear-gradient(90deg,#0c4f86 0%, #134f83 25%, #0d3f6a 60%, #0a3357 100%);
+    color:#ffffff;
+    min-height:18mm;
+    display:grid;
+    grid-template-columns:24mm 1fr 44mm;
+    align-items:center;
+    padding:0 5mm;
+    border-bottom:1px solid #0c3860;
+}
+
+.pdf-top-pill {
+    justify-self:start;
+    width:max-content;
+    border:1.6px solid rgba(255,255,255,.8);
+    color:#ffffff;
+    border-radius:999px;
+    padding:2px 9px;
+    font-size:9.5px;
+    font-weight:900;
+    line-height:1.4;
+}
+
+.pdf-title-wrap {
+    text-align:center;
+    line-height:1.35;
+}
+
+.pdf-main-title {
+    font-size:14px;
+    font-weight:900;
+    color:#ffffff;
+}
+
+.pdf-sub-title {
+    font-size:8.8px;
+    font-weight:800;
+    color:#d5efff;
+    margin-top:1px;
+}
+
+.pdf-meta-top {
+    justify-self:end;
+    text-align:left;
+    font-size:8.5px;
+    font-weight:800;
+    color:#ffdf8a;
+    line-height:1.5;
+}
+
+.pdf-page-content {
+    padding:3.5mm 4mm 2.5mm;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
+
+.pdf-grid {
+    flex:1;
+    min-height:0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:2.6mm 3mm;
+    align-content:start;
+    overflow:hidden;
+}
+
+.pdf-card {
+    position:relative;
+    border:1.15px solid #80abd0;
+    border-radius:7px;
+    padding:3.2mm 3mm 2.6mm;
+    background:#fbfdff;
+    box-shadow: inset 0 0 0 .5px rgba(255,255,255,.7);
+    break-inside:avoid;
+}
+
+.pdf-card-num {
+    position:absolute;
+    top:2.1mm;
+    left:2.2mm;
+    min-width:10.5mm;
+    text-align:center;
+    background:#ffffff;
+    border:1.2px solid #6b9fca;
+    border-radius:999px;
+    padding:0.5mm 2mm;
+    color:#184d7b;
+    font-size:8px;
+    font-weight:900;
+    line-height:1.3;
+}
+
+.pdf-card-title {
+    padding-left:13mm;
+    color:#0e4b81;
+    font-size:9.4px;
+    font-weight:900;
+    line-height:1.55;
+    margin-bottom:1.3mm;
+}
+
+.pdf-card-options {
+    border-top:1px dashed #cbdceb;
+    padding-top:1.4mm;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:1mm;
+}
+
+.pdf-card-option {
+    display:flex;
+    align-items:flex-start;
+    gap:1.6mm;
+    color:#183550;
+    font-size:7.8px;
+    font-weight:700;
+    line-height:1.5;
+}
+
+.pdf-card-letter {
+    width:5.2mm;
+    height:5.2mm;
+    flex:0 0 5.2mm;
+    border-radius:3px;
+    background:#e8f2fb;
+    border:1px solid #b8d0e7;
+    color:#0f426d;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:7.2px;
+    font-weight:900;
+    margin-top:.1mm;
+}
+
+.pdf-card-option-text {
+    flex:1;
+    min-width:0;
+}
+
+.pdf-bottom-note {
+    margin-top:3mm;
+    border:1.3px solid #ddb75a;
+    border-radius:6px;
+    min-height:18mm;
+    display:grid;
+    grid-template-columns:30mm 1fr 41mm;
+    align-items:center;
+    padding:2.2mm 3mm;
+    gap:3mm;
+    background:linear-gradient(180deg,#fffdfa 0%, #fffaf1 100%);
+}
+
+.pdf-bottom-note .qr-css {
+    width:21mm !important;
+    height:21mm !important;
+    border:2.2px solid #fff !important;
+    border-radius:3px !important;
+    margin:0 auto !important;
+    background:#fff !important;
+}
+.pdf-bottom-note .qr-css i { background:#000 !important; }
+
+.pdf-note-qr-wrap {
+    text-align:center;
+}
+.pdf-note-qr-label {
+    color:#0f456f;
+    font-size:6.8px;
+    font-weight:900;
+    margin-top:.8mm;
+}
+
+.pdf-note-center {
+    text-align:center;
+    line-height:1.65;
+}
+.pdf-note-main {
+    color:#8a6617;
+    font-size:8.1px;
+    font-weight:900;
+}
+.pdf-note-sub {
+    color:#375370;
+    font-size:7.1px;
+    font-weight:800;
+}
+
+.pdf-note-contact {
+    text-align:right;
+    line-height:1.8;
+}
+.pdf-note-contact .lbl {
+    color:#9b7524;
+    font-size:6.8px;
+    font-weight:900;
+}
+.pdf-note-contact .val {
+    color:#163a5a;
+    font-size:8.3px;
+    font-weight:900;
+    direction:ltr;
+}
+
+.pdf-footerbar {
+    background:linear-gradient(90deg,#0a3153 0%, #113f66 55%, #0a3153 100%);
+    min-height:10mm;
+    color:#ffffff;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    align-items:center;
+    padding:0 4mm;
+    gap:3mm;
+    border-top:1px solid #0a2c4a;
+}
+
+.pdf-footer-item {
+    display:flex;
+    align-items:center;
+    gap:1.8mm;
+    font-size:7.2px;
+    font-weight:800;
+    color:#e7f6ff;
+    min-width:0;
+}
+.pdf-footer-item.center { justify-content:center; text-align:center; }
+.pdf-footer-item.end { justify-content:flex-end; text-align:left; }
+.pdf-footer-icon {
+    width:4.6mm;
+    height:4.6mm;
+    border-radius:50%;
+    background:#f0c04d;
+    color:#113e63;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:6.5px;
+    font-weight:900;
+    flex:0 0 4.6mm;
+}
+.pdf-footer-text {
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+
+/* Answer marking and top/bottom contact information for PDF sheets */
+.pdf-topbar { grid-template-columns:22mm 1fr 48mm; }
+.pdf-meta-top { font-size:7.5px; line-height:1.75; direction:rtl; text-align:left; }
+.pdf-correct-option { background:#e8fbef; border:1px solid #20a66c; padding:1.1mm; border-radius:4px; }
+.pdf-correct-option .pdf-card-letter { background:#158752; color:#ffffff; border-color:#158752; }
+.pdf-correct-option .pdf-card-option-text { color:#095a36; font-weight:900; }
+.pdf-correct-mark { display:inline-block; margin-right:2mm; color:#047646; font-size:7.5px; font-weight:900; white-space:nowrap; }
+@media print { .pdf-correct-option { background:#e8fbef!important; } }
+
+/* Fix phone/username direction in exported PDF to match the card exactly */
+.pdf-ltr-inline{
+    direction:ltr !important;
+    unicode-bidi:isolate !important;
+    display:inline-block !important;
+    text-align:left !important;
+    white-space:nowrap !important;
+}
+.pdf-meta-top{
+    direction:rtl !important;
+}
+.pdf-meta-top .pdf-ltr-inline{
+    color:inherit;
+}
+.pdf-note-contact .val,
+.pdf-footer-text.phone,
+.pdf-footer-text.tg{
+    direction:ltr !important;
+    unicode-bidi:isolate !important;
+    display:inline-block !important;
+    text-align:left !important;
+    white-space:nowrap !important;
+}
+
+
+/* شريط بيانات التواصل الفاخر: سطر واحد ثابت أسفل كل صفحة PDF */
+.pdf-lux-footer {
+ display:flex!important; direction:rtl!important; justify-content:space-evenly!important;
+ align-items:center!important; gap:2mm!important; padding:1.4mm 4mm!important;
+ height:12mm!important; min-height:12mm!important; flex-shrink:0!important;
+ border-top:2px solid #cfa44b!important;
+ background:linear-gradient(100deg,#061a33,#133f6a 48%,#061a33)!important;
+}
+.pdf-lux-item{display:inline-flex;align-items:center;justify-content:center;gap:1.5mm;white-space:nowrap;
+ font-size:8.2px;font-weight:900;color:#fff6db;line-height:1.3;}
+.pdf-lux-name{color:#ffda79;font-size:9px}
+.pdf-lux-mark{display:inline-flex;align-items:center;justify-content:center;width:5.2mm;height:5.2mm;
+ border-radius:50%;color:#092a4a;background:#eac25b;font-size:8.5px;flex-shrink:0;}
+.pdf-lux-separator{height:5.5mm;width:1px;flex:none;background:rgba(247,211,128,.45)}
+.pdf-lux-footer .pdf-ltr-inline{direction:ltr!important;unicode-bidi:isolate!important;
+ display:inline-block!important;color:inherit!important;white-space:nowrap!important;}
+@media print{.pdf-lux-footer{break-inside:avoid!important;page-break-inside:avoid!important;}}
+
+/* ضمان ظهور شريط التواصل أسفل كل صفحة مطبوعة */
+@media print {
+  #pdf-export-root .pdf-page {
+    width:198mm!important;height:284mm!important;min-height:284mm!important;
+    max-height:284mm!important;display:flex!important;flex-direction:column!important;
+    margin:0!important; padding:0!important;overflow:hidden!important;
+    page-break-after:always!important;break-after:page!important;
+  }
+  #pdf-export-root .pdf-page:last-child {page-break-after:auto!important;break-after:auto!important;}
+  #pdf-export-root .pdf-topbar {flex:0 0 19mm!important;min-height:19mm!important;}
+  #pdf-export-root .pdf-page-content {flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;}
+  #pdf-export-root .pdf-grid {min-height:0!important;overflow:hidden!important;align-content:start!important;}
+  #pdf-export-root .pdf-footerbar.pdf-lux-footer {
+    display:flex!important;position:relative!important;flex:0 0 12mm!important;
+    height:12mm!important;min-height:12mm!important;width:100%!important;
+    visibility:visible!important;opacity:1!important;bottom:0!important;
+    background:#0b2b4c!important;color:#fff!important;
+    -webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;
+  }
+}
+
+/* PDF layout must have real A4 dimensions WHILE pagination is calculated. */
+#pdf-export-root {width:198mm!important;}
+#pdf-export-root .pdf-page {height:284mm!important;min-height:284mm!important;max-height:284mm!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;}
+#pdf-export-root .pdf-topbar {flex:0 0 19mm!important;min-height:19mm!important;}
+#pdf-export-root .pdf-page-content {flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;}
+#pdf-export-root .pdf-grid {flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;grid-auto-rows:max-content!important;align-content:start!important;}
+#pdf-export-root .pdf-footerbar.pdf-lux-footer {position:relative!important;flex:0 0 12mm!important;height:12mm!important;min-height:12mm!important;z-index:2!important;}
+@media print {#pdf-export-root .pdf-page {margin:0!important;}}
+
+
+/* PDF-only mode: hide every other interaction and leave just the all-cards PDF action */
+.pdf-only-controls { width:min(960px,100%);justify-content:center; }
+.pdf-only-button { font-size:17px; padding:13px 30px; justify-content:center; }
+#pro-student-screen .student-action-row, #result-screen .btn-restart { display:none!important; }
+@media print { .pdf-only-controls {display:none!important;} }
+
+        /* عبارة دعوة الانضمام داخل التذييل ـ تظهر في الشاشة والتصدير */
+        .bottom-footer { flex-wrap: wrap; row-gap: 12px; }
+        .footer-join-message {
+            flex: 0 0 100%; width:100%; order: 9; text-align:center;
+            padding:12px 8px 4px; margin-top:2px;
+            border-top:1px solid rgba(212,175,55,.5);
+            color:#f6d77e; font-size:clamp(14px, 1.9vw, 21px);
+            line-height:1.75; font-weight:900; letter-spacing:0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- أزرار التحكم الشاملة (التنقل + التصدير) -->
+    <div class="main-controls pdf-only-controls">
+        <button class="btn-ctrl btn-nav" id="btn-prev" type="button" onclick="prevQuestion()">➔ السابق</button>
+        <button class="btn-ctrl btn-nav" id="btn-next-top" type="button" onclick="nextQuestion()">التالي ⬅</button>
+        <button class="btn-ctrl btn-pdf pdf-only-button" type="button" onclick="exportToPDF()">📄 تصدير جميع البطاقات PDF</button>
+    </div>
+
+    <div id="quiz-app">
+        <div class="top-header">
+            <div class="header-icon-box">📖</div>
+            <div class="header-center">
+                <div class="main-title">الرخصة المهنية عام</div>
+                <div class="sub-title" style="max-width:690px;line-height:1.6;font-size:14px"></div>
+                <div class="author-name">إعداد / إبراهيم أبوزيد — التربوي العام</div>
+                <div style="color:#f4cf74;font-size:13px;font-weight:900;margin-top:5px">#الرخصة-المهنية_عام</div>
+            </div>
+            <div class="header-icon-box">⏳</div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div id="quiz-screen">
+            <div class="status-row">
+                <span id="question-count">الأسئلة: 0</span>
+                <span id="score-count">النقاط: 0</span>
+            </div>
+
+            <div id="pro-student-screen">
+                <div class="student-hero">
+                    <div class="student-hero-top">
+                        <div>
+                            <div class="student-hero-title">شاشة السؤال الاحترافية</div>
+                            <div class="student-hero-sub">اقرأ السؤال جيدًا، ثم اختر الإجابة الصحيحة — أنت قادر على الحل 🌟</div>
+                        </div>
+                        <div class="student-hero-badge">🎯 فكّر أولاً ثم أجب</div>
+                    </div>
+                </div>
+                <div class="student-q-card">
+                    <div class="student-q-head">
+                        <div class="student-kicker">اختر الإجابة الأنسب من بين الخيارات التالية</div>
+                        <div class="student-q-badge" id="pro-q-badge">سؤال 1</div>
+                    </div>
+                    <div class="student-q-text" id="pro-q-text">نص السؤال...</div>
+                </div>
+                <div class="student-options-grid" id="pro-options-container"></div>
+                <div class="student-action-row">
+                    <button class="student-action-btn copy" onclick="copyQuestionOnly()">📋 نسخ السؤال والخيارات</button>
+                    <button class="student-action-btn share" onclick="shareStudentQuestion()">💬 مشاركة السؤال للطلاب</button>
+                    <button class="student-action-btn image" onclick="copyCurrentCardAsImage('professional')">📋 نسخها كصورة</button>
+                    <button class="student-action-btn answer" onclick="copyShareMessage()">✅ نسخ نسخة الإجابة الكاملة</button>
+                </div>
+                <div class="student-encourage" id="student-encourage">💡 شجّع طلابك على المحاولة: اختر الإجابة التي تراها صحيحة، ثم تحقّق من الحل.</div>
+                <div class="student-copy-feedback" id="student-copy-feedback"></div>
+            </div>
+
+            <div class="card-body" id="standard-card-body">
+                <div class="question-card-container">
+                    <div class="question-header-row">
+                        <div class="badge-q-tag" id="q-badge">جاهز للأسئلة</div>
+                        <div class="q-text-content" id="q-text">نص السؤال...</div>
+                    </div>
+                </div>
+
+                <div class="options-grid" id="options-container"></div>
+            </div>
+        </div>
+
+        <div id="result-screen">
+            <h2 style="font-size: 28px; color: #0f2c59; font-weight: 900;">اكتمل الاختبار بنجاح!</h2>
+            <div class="result-score" id="final-score">0 / 0</div>
+            <p id="result-message" style="font-size: 18px; font-weight: 700; color: #475569;"></p>
+            <button class="btn-restart" onclick="restartQuiz()">إعادة الاختبار 🔄</button>
+        </div>
+
+        <div class="bottom-footer">
+            <div class="footer-sec">
+                <div class="footer-icon-circle">📞</div>
+                <div>
+                    <div class="footer-text-title">رقم الهاتف</div>
+                    <div class="footer-text-val" dir="ltr">+966 55 783 1353</div>
+                </div>
+            </div>
+            <div class="footer-sec-center">
+                <div class="footer-owner">إبراهيم أبوزيد</div>
+                <div style="color:#eacb78;font-size:11px;font-weight:800">قناة الرخصة المهنية عام</div>
+            </div>
+            <div class="footer-sec" style="direction: ltr;">
+                <div class="footer-icon-circle">✈</div>
+                <div style="text-align: right;">
+                    <div class="footer-text-title">قناة الرخصة المهنية عام</div>
+                    <a class="footer-text-val" href="https://t.me/+ZakELIR9__g4NmU0" target="_blank" rel="noopener noreferrer" style="text-decoration:none;font-size:12px">t.me/+ZakELIR9__g4NmU0</a>
+                    <div class="footer-text-title">حساب تليجرام</div>
+                    <a class="footer-text-val" href="https://t.me/myibhistoricy" target="_blank" rel="noopener noreferrer" style="text-decoration:none;font-size:12px">@myibhistoricy</a>
+                </div>
+            </div>
+            <div class="footer-join-message">انضم الينا  واحصل على ملفات شاملة واختبارات إلكترونية شاملة</div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+    {
+        "num": 1,
+        "q": "طفل رضيع في الشهر الثامن من عمره، يعتمد بشكل كلي على حواسه وحركته (البصر، السمع، اللمس) في اكتشاف بيئته. في أي مرحلة من مراحل النمو المعرفي عند بياجيه يقع هذا الطفل؟",
+        "options": [
+            "مرحلة ما قبل العمليات.",
+            "مرحلة العمليات الحسية أو المادية.",
+            "مرحلة العمليات الحسية الحركية.",
+            "مرحلة التفكير المجرد."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 2,
+        "q": "طفل في سن الثالثة والنصف، يمارس اللعب التخيلي ويبدأ في استخدام التفكير الحدسي وتمثيل الأشياء رمزياً، لكنه يفتقر للوعي بثبات الخصائص (كأن يظن أن كمية السائل تغيرت بتغير شكل الكأس). هذه الخصائص تميز مرحلة:",
+        "options": [
+            "الحسية الحركية.",
+            "ما قبل العمليات.",
+            "العمليات المادية.",
+            "التفكير المجرد."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 3,
+        "q": "عندما يتمكن الطالب من استيعاب مفاهيم (الكل والجزء، الكم والكيف، والقدرة على استعادة الأحداث الحقيقية في صورة فكرة، واكتساب خاصية المقلوبية أو العكسية)، فإنه في مرحلة:",
+        "options": [
+            "العمليات الحسية أو المادية (من 7 - 11 سنة).",
+            "ما قبل العمليات (من 2 - 7 سنوات).",
+            "التفكير المجرد (من 12 - 15 سنة).",
+            "النمو اللغوي الفطري."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 4,
+        "q": "طالب في المرحلة الثانوية (14 سنة)، يتطور لديه التفكير المنطقي، ويستطيع وضع الفرضيات والاحتمالات، ومقارنة الأشياء وتحليلها واختيار الأنسب، واكتساب المنطقية التي يتبناها تباعاً للبيئة. هذا يمثل مرحلة:",
+        "options": [
+            "العمليات المادية.",
+            "التفكير المجرد.",
+            "ما قبل العمليات.",
+            "العمليات الحسية الحركية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 5,
+        "q": "وفقاً لنظرية إريكسون للنمو النفسي الاجتماعي، فإن المرحلة الأولى (من الميلاد إلى 18 شهراً) يتم فيها تحقيق التوازن بين:",
+        "options": [
+            "الاستقلال مقابل الشعور بالخجل.",
+            "الثقة مقابل عدم الثقة (التطلع).",
+            "المبادرة مقابل الشعور بالذنب.",
+            "الهوية مقابل تشوش الدور."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 6,
+        "q": "في نظرية إريكسون، المرحلة العمرية التي تمتد من (6 - 12 سنة) وتتوافق مع دخول الطفل المدرسة ويتكون لديه إما الشعور بالكفاية أو الشعور بالنقص (المنافسة) هي المرحلة:",
+        "options": [
+            "الثالثة.",
+            "الرابعة.",
+            "الخامسة.",
+            "السادسة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 7,
+        "q": "مراهق في المرحلة العمرية (12 - 18 سنة)، يمر بمحاولة معرفة احتياجاته وإيجاد دوره الاجتماعي، ومحاولة تحقيق ذاته وهويته، وإذا لم يستطع يحدث لديه تشوش الهوية. هذه المرحلة في نظرية إريكسون هي:",
+        "options": [
+            "المرحلة الرابعة.",
+            "المرحلة الخامسة.",
+            "المرحلة السادسة.",
+            "المرحلة السابعة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 8,
+        "q": "وفقاً لنظرية جيروم برونر في النمو المعرفي، فإن النشاط الذي يعتمد فيه الفرد على التمثيل الحركي ويحاول أن يفسر ما يجري حوله بحس الحركات هو:",
+        "options": [
+            "النشاط الرمزي.",
+            "النشاط التخيلي.",
+            "النشاط العملي أو الحركي.",
+            "النشاط الاستدلالي."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 9,
+        "q": "في تصنيف برونر للتمثيل المعرفي، النشاط الذي يستخدم الكلمات وتسمى التمثيلبر الرمزية حيث يستخدم اللغة في تشكيل المفهوم وقبل الالتحاق بالمدرسة هو:",
+        "options": [
+            "النشاط العملي.",
+            "النشاط التخيلي (استخدام الصور العقيلة).",
+            "النشاط الرمزي.",
+            "النشاط الحس-حركي."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 10,
+        "q": "يرى صاحب نظرية النحو التوليدي (نعوم تشومسكي) أن الأطفال لديهم:",
+        "options": [
+            "استعداد فطري لاكتساب وتطوير اللغة.",
+            "حصيلة لغوية مكتسبة بالكامل من البيئة الاجتماعية فقط دون استعداد مسبق.",
+            "قدرة لغوية تعتمد كلياً على النضج العضلي للجهاز الهضمي.",
+            "توقف تام عن الكلام حتى سن السادسة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 11,
+        "q": "في مراحل نمو اللغة عند تشومسكي، المرحلة التي يبدأ فيها الطفل بين سن (الثانية والثالثة) في نطق كلمتين أو أكثر بمعانٍ صغيرة هي:",
+        "options": [
+            "مرحلة اللغة الفطرية.",
+            "مرحلة الكلمة الواحدة.",
+            "مرحلة الكلمتين.",
+            "تكوين القواعد المعقدة."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 12,
+        "q": "عوامل النمو الأساسية عند بياجيه تتمثل في ثلاثة عوامل رئيسية هي:",
+        "options": [
+            "الوراثة، البيئة، النضج.",
+            "النضج، التوازن، التفاعل الاجتماعي.",
+            "التعزيز، العقاب، الممارسة.",
+            "الذكاء، العمر الزمني، الجنس."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 13,
+        "q": "المرحلة العمرية (18 - 24 سنة) في نظرية إريكسون يطلق عليها مسمى:",
+        "options": [
+            "الإنتاجية مقابل الركود.",
+            "الألفة مقابل العزلة (الحب).",
+            "التكامل الذاتي مقابل اليأس.",
+            "الهوية مقابل تشوش الدور."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 14,
+        "q": "في هرم ماسلو للاحتياجات الإنسانية (نظرية التحفيز الإنساني 1943)، تأتي الحاجة إلى (المأكل، الملبس، المشرب) في قاعدة الهرم تحت مسمى:",
+        "options": [
+            "حاجات الأمن.",
+            "الحاجات الفسيولوجية.",
+            "حاجات التقدير والاحترام.",
+            "حاجات اجتماعية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 15,
+        "q": "وفقاً لهرم ماسلو، أي من الحاجات التالية تقع في المستوى الذي يعلو الحاجات الفسيولوجية مباشرة؟",
+        "options": [
+            "حاجة تحقيق الذات.",
+            "حاجات التقدير والاحترام.",
+            "حاجات اجتماعية.",
+            "حاجة الأمن (مسكن، وظيفة، صحة، مال)."
+        ],
+        "correct": 3
+    },
+    {
+        "num": 16,
+        "q": "حاجات تتضمن الصداقة، الأسرة، ومساعدة الآخرين في هرم ماسلو تعرف بـ:",
+        "options": [
+            "الحاجات الاجتماعية.",
+            "حاجات التقدير.",
+            "حاجات الأمان.",
+            "الحاجات الفسيولوجية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 17,
+        "q": "كسب احترام الناس، التميز في العمل، والرغبة في الظهور وتقدير الأصدقاء، تمثل في هرم ماسلو:",
+        "options": [
+            "حاجات تحقيق الذات.",
+            "حاجات التقدير والاحترام.",
+            "الحاجات الاجتماعية.",
+            "الحاجات الفسيولوجية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 18,
+        "q": "النجاح في العمل والمشاركة في الحياة تقع في قمة هرم ماسلو تحت مسمى:",
+        "options": [
+            "حاجة تحقيق الذات.",
+            "حاجة الأمن.",
+            "حاجات التقدير.",
+            "الحاجات الفسيولوجية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 19,
+        "q": "وفقاً لمراحل نمو اللغة عند تشومسكي، متى يصل الطفل إلى مرحلة \"القدرة على التحويل\"؟",
+        "options": [
+            "عند الولادة (الصرخة الأولى).",
+            "في عمر السنة.",
+            "في عمر سنتين (مرحلة الكلمتين).",
+            "يحدث بين الثالثة والسادسة فينتطق جمل مطولة."
+        ],
+        "correct": 3
+    },
+    {
+        "num": 20,
+        "q": "مرحلة في نمو اللغة عند تشومسكي يقترب فيها الطفل من النطق كالكبار ابتداءً من السنة السادس:",
+        "options": [
+            "مرحلة الكلمة الواحدة.",
+            "اكتساب القواعد اللغوية.",
+            "تكوين القواعد المعقدة.",
+            "مرحلة الكلمتين."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 21,
+        "q": "النجاح في اكتمال النمو وفق إريكسون يؤدي إلى تكوين الشخصية السوية، بينما الفشل يؤدي إلى:",
+        "options": [
+            "اضطراب عقلي تام.",
+            "خلل في الشخصية.",
+            "توقف النمو الجسمي.",
+            "تراجع العمر الزمني."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 22,
+        "q": "المرحلة العمرية (24 - 50 سنة) في نظرية إريكسون يطلق عليها:",
+        "options": [
+            "الإنتاجية مقابل الركود (الاهتمام).",
+            "الألفة مقابل العزلة.",
+            "التكامل الذاتي مقابل اليأس.",
+            "المبادرة مقابل الذنب."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 23,
+        "q": "المرحلة العمرية (50 سنة فأكثر) في نظرية إريكسون تعرف بمرحلة:",
+        "options": [
+            "الإنتاجية مقابل الركود.",
+            "التكامل الذات مقابل اليأس (الحكمة).",
+            "الهوية مقابل التشوش.",
+            "الثقة مقابل عدم الثقة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 24,
+        "q": "في مرحلة \"العمليات الحسية أو المادية\" عند بياجيه، يصنف الطفل الأشياء بحسب:",
+        "options": [
+            "اللون والشكل.",
+            "التفكير المجرد البحت.",
+            "الخيال المطلق دون أدلة.",
+            "الفرضيات الرياضية المعقدة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 25,
+        "q": "الطور الحدسي في مرحلة ما قبل العمليات عند بياجيه يقع في الفئة العمرية:",
+        "options": [
+            "من الميلا إلى سنتين.",
+            "من 2 - 4 سنوات.",
+            "من 4 - 7 سنوات (يبدأ الوعي بثبات الخصائص).",
+            "من 7 - 11 سنة. الفروق الفردية (تعريفها، أخصائها، أهميتها، عواملها)"
+        ],
+        "correct": 2
+    },
+    {
+        "num": 26,
+        "q": "يُعرف مصطلح \"الفروق الفردية\" بأنه:",
+        "options": [
+            "التطابق التام بين الأفراد في جميع الصفات.",
+            "الانحراف عن متوسط الجماعة في الصفات المختلفة الجسمية والعقلية والانفعالية والاجتماعية.",
+            "التباين في العمر الزمني فقط بين الطلاب.",
+            "الفروق الناتجة عن التدريس الخاطئ فقط."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 27,
+        "q": "تصنف الفروق الفردية من حيث أقسامها إلى:",
+        "options": [
+            "طبيعية، مشتركة، مكتسبة، تربوية.",
+            "وراثية بحتة، بيئية بحتة، عشوائية.",
+            "داخلية، خارجية، مؤقتة.",
+            "عمرية، جنسية، طبقية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 28,
+        "q": "الفروق التي تعود للوراثة والبيئة والظروف الاجتماعية المحيطة تسمى بالفروق:",
+        "options": [
+            "الطبيعية.",
+            "المشتركة.",
+            "المكتسبة.",
+            "التربوية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 29,
+        "q": "الفروق التي تنتج نتيجة للخبرات المتراكمة تعرف بالفروق:",
+        "options": [
+            "المكتسبة.",
+            "الجسمية.",
+            "الوراثية.",
+            "الفيسيولوجية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 30,
+        "q": "\"فلا يوجد شخصان يتشابهان في استجابة كل منهما لموقف واحد\". هذه الخاصية تمثل:",
+        "options": [
+            "مدى الفروق الفردية.",
+            "عمومية الفروق الفردية.",
+            "ثبات الفروق الفردية.",
+            "قابلية الفروق الفردية للقياس."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 31,
+        "q": "عندما نستخدم \"عدد المفردات التي يجيب عليها المفحصوب بحيث نصل إلى قياس درجة ذكائه\"، فإننا نطبق خصائص الفروق المتمثلة في:",
+        "options": [
+            "عمومية الفروق.",
+            "قابلية الفروق الفردية للقياس.",
+            "مدى الفروق.",
+            "ثبات الفروق."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 32,
+        "q": "الفرق بين أعلى درجة أو صفة وأقل درجة لها في الصفات المختلفة يسمى بـ:",
+        "options": [
+            "عمومية الفروق.",
+            "مدى الفروق الفردية.",
+            "ثبات الفروق.",
+            "تباين النوع."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 33,
+        "q": "تتميز الفروق العقلية المعرفية بـ \"الثبات وخاصة بعد مرحلة المراهقة المبكرة\". هذه الخاصية تدل على:",
+        "options": [
+            "عمومية الفروق.",
+            "ثبات الفروق الفردية.",
+            "قابلية القياس.",
+            "فروق الدرجة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 34,
+        "q": "تعتبر الفروق الفردية من حيث طبيعتها أنها:",
+        "options": [
+            "فروق في النوع وليست في الدرجة.",
+            "فروق في الدرجة وليست في النوع.",
+            "فروق وهمية لا وجود لها.",
+            "فروق مؤقتة تزول بالزمن."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 35,
+        "q": "من أهمية اكتشاف الفروق الفردية في الجانب النفسي والصحي:",
+        "options": [
+            "رعاية الفروق الفردية من أسس الصحة النفسية والتربية السليمة.",
+            "زيادة المنافسة السلبية بين الطلاب.",
+            "توحيد المناهج دون مراعاة لأحد.",
+            "إلغاء الأنشطة الإضافية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 36,
+        "q": "تبرز الأهمية المهنية والوظيفية للفروق الفردية في:",
+        "options": [
+            "فهم الآخرين وإلقاء الضوء على تصرفاتهم.",
+            "وضع الفرد المناسب في العمل المناسب.",
+            "مساعدة الفرد على تفهم نفسه ومواهبه.",
+            "تحقيق الصحة النفسية المطلقة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 37,
+        "q": "الأهمية الخلقية لاكتشاف الفروق الفردية تتمثل في:",
+        "options": [
+            "مساعدة الفرد على تفهم نفسه.",
+            "المساعدة على فهم الآخرين وإلقاء الضوء على كثير من تصرفاتهم.",
+            "اختيار التخصصات المناسبة.",
+            "تقليل الفاقد التعليمي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 38,
+        "q": "الأهمية الذاتية للفروق الفردية تساعد الفرد على:",
+        "options": [
+            "تفهم نفسه واستغلال مواهبه ومعرفة إمكاناته.",
+            "اختيار العمل الوظيفي فقط.",
+            "فهم الآخرين وتصرفاتهم الخلقية.",
+            "تحقيق الوراثة المطلقة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 39,
+        "q": "من العوامل المؤثرة في الفروق الفردية، العامل الذي تنتقل فيه الصفات الأساسية من الآباء إلى الأبناء يسمى:",
+        "options": [
+            "البيئة الاجتماعية.",
+            "الوراثة والاستعداد الفطري.",
+            "العمر الزمني.",
+            "المستوى العقلي المعرفي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 40,
+        "q": "في العوامل المؤثرة في الفروق الفردية، نجد أن \"النمو العقلي عند الإناث أعلى منه عند الذكور حتى سن المراهقة، بينما الذكور يزداد نموهم أكثر في سن المراهقة وبعد ذلك تقترب المستويات\". هذا العامل يتعلق بـ:",
+        "options": [
+            "الجنس.",
+            "العمر الزمني.",
+            "البيئة الاجتماعية.",
+            "الاستعداد الفطري."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 41,
+        "q": "كلما ازدادت العمليات العقلية تعقيداً وصعوبة:",
+        "options": [
+            "اتمسكت الفروق بالتشابه التام.",
+            "ازدادت الفروق القائمة بين الأفراد وتباين سلوكهم طبقا لتباينهم في العمليات العليا.",
+            "تلاشت الفروق الفردية تماماً.",
+            "أصبحت الفروق ثابتة لا تتغير."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 42,
+        "q": "من أهمية معرفة الفروق الفردية في المجال التعليمي:",
+        "options": [
+            "إعداد المناهج بما يتناسب مع قدرات واستعدادات الطلاب المتباينة.",
+            "تثبيت وتوحيد طرق التدريس لكل الطلاب.",
+            "إلغاء الأنشطة والبرامج الإضافية للمهوبين.",
+            "الاعتماد على طريقة تدريس واحدة جامدة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 43,
+        "q": "إدراج العديد من الأنشطة والبرامج الإضافية مثل رعاية الموهوبين والنوادي العلمية والثقافية والمسابقات يلبي:",
+        "options": [
+            "الفاقد التعليمي فقط.",
+            "احتياجات الطلبة المختلفة بناءً على الفروق الفردية.",
+            "رغبة أولياء الأمور الشكلية.",
+            "توحيد مستويات الذكاء."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 44,
+        "q": "تقسيم التلاميذ إلى شعب بحسب درجات الذكاء أو القدرات العقلية في بعض المدارس يسمى بطريقة:",
+        "options": [
+            "المجموعات ذات القدرة الواحدة.",
+            "التقسيم العشوائي.",
+            "التعليم الجماعي.",
+            "التنويع الحركي."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 45,
+        "q": "من الانتقادات الموجهة لطريقة \"المجموعات ذات القدرة الواحدة\" في الدول المتقدمة:",
+        "options": [
+            "تؤدي إلى التجانس التام والعدالة المطلقة.",
+            "تؤدي إلى شعور التلاميذ بالتميز السلبي وحرمان التلاميذ الأقل ذكاءً من زملائهم الأذكياء.",
+            "تزيد من تفاعل الطلاب بمختلف المستويات.",
+            "تقضي تماماً على الفروق الفردية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 46,
+        "q": "طريقة يتم فيها تقسيم التلاميذ عشوائياً بحيث يضم الصف الواحد تلاميذ مختلفين في الاستعدادات لمواجهة الفروق الفردية تسمى:",
+        "options": [
+            "المجموعات ذات القدرة الواحدة.",
+            "التقسيم العشوائي.",
+            "التعليم الفردي البحت.",
+            "طريقة التعليم الجماعي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 47,
+        "q": "من مميزات طريقة \"التعليم الجماعي\" في التدريس:",
+        "options": [
+            "الاعتماد على معلم واحد بدلاً من مجموعة معلمين في التخطيط والتنفيذ.",
+            "ضمان التجانس التام بين الطلاب.",
+            "إلغاء دور المرشد التربوي.",
+            "عدم تطلب معلمين مؤهلين باختصاصات."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 48,
+        "q": "أي من الأساليب التالية يعتبر من أساليب المعلم في مراعاة الفروق الفردية داخل الفصل؟",
+        "options": [
+            "استخدام طريقة واحدة في التدريس لجميع الطلاب.",
+            "التنويع في أساليب التدريب (الحوار، تمثيل الأدوار، القصة، العصف الذهني).",
+            "توحيد الأمثلة وتجنب تنويعها.",
+            "إلغاء التعزيز بأنواعه."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 49,
+        "q": "يعني \"تغيير المعلم من موقعه في حجرة الدرس\" أسلوباً يعرف بـ:",
+        "options": [
+            "التنويه الصوتي.",
+            "التنويع الحركي.",
+            "تحويل التفاعل.",
+            "استخدام الحواس."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 50,
+        "q": "أسلوب يقوم على التفاعل بين (المعلم والطلاب، وتفاعل المعلم وطالب، وتفاعل بين طالب وطالب) يسمى:",
+        "options": [
+            "التنوع الحركي.",
+            "تحويل التفاعل.",
+            "الصمت.",
+            "التعزيز."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 51,
+        "q": "\"التوقف عن الكلام أو الصمت للحظات بهدف جذب انتباه التلاميذ\" يعد أحد أساليب:",
+        "options": [
+            "مراعاة الفروق الفردية (أساليب المعلم).",
+            "العقاب المدرسي.",
+            "التقسيم العشوائي.",
+            "إعداد المناهج الجامدة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 52,
+        "q": "\"لكل طالب خمس حواس، وعليه أن يعد درسه بحيث يخاطب كل قنوات الاتصال عند الطالب\". هذا يمثل أسلوب:",
+        "options": [
+            "التنويع في استخدام الحواس.",
+            "التنويع الحركي.",
+            "تحويل التفاعل.",
+            "توظيف الوسائل."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 53,
+        "q": "من النتائج التي تتحقق بمراعاة الفروق الفردية في العملية التعليمية:",
+        "options": [
+            "زيادة الفاقد التعليمي.",
+            "التقليل من الفاقد التعليمي والوصول بمستويات الطلاب إلى الأهداف المنشودة.",
+            "إهمال المستويات الضعيفة.",
+            "التركيز على فئة معينة من الطلاب."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 54,
+        "q": "العمر الزمني كعامل مؤثّر في الفروق الفردية يظهر في أن:",
+        "options": [
+            "الفروق الزمنية في أعمار الناس من شأنها أن تشكل فروقاً في المعرفة والخبرات.",
+            "تساوى الخبرات بغض النظر عن العمر.",
+            "توقف التعلم بانتهاء مرحلة الطفولة.",
+            "عدم تأثير الزمن على القدرات."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 55,
+        "q": "البيئة الاجتماعية كعامل مؤثر تعني أن:",
+        "options": [
+            "الاستعداد الفطري وحده يكفي للكلام.",
+            "مثل الاستعداد للكلام يلزم له بيئة اجتماعية لممارسته.",
+            "الوراثة تلغي أثر البيئة تماماً.",
+            "الظروف المحيطة لا تأثر في الفرد. مفاهيم ومصطلحات التعلم والتعليم وعواملها المؤثرة"
+        ],
+        "correct": 1
+    },
+    {
+        "num": 56,
+        "q": "مجموعة العمليات التي يستطيع المجتمع أن ينقل معارفه وأهدافه المكتسبة ليحافظ على بقائه، وتعني في الوقت نفسه التجدد المستمر لهذا التراث وللأفراد هي:",
+        "options": [
+            "التدريس (Teaching).",
+            "التعليم (Instruction).",
+            "التربية (Education).",
+            "التعلم (Learning)."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 57,
+        "q": "عبارة عن خبرات ومعارف ومعلومات يتم نقلها من المعلم إلى المتعلم بطرق معينة ومن أجل الوصول إلى أهداف معينة ومحددة، تعرف بـ:",
+        "options": [
+            "التعليم (Instruction).",
+            "التدريس (Teaching).",
+            "التعلم (Learning).",
+            "التربية (Education)."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 58,
+        "q": "مجموعة من النشاطات المشتركة بين الطلاب والمدرسين، والتي تعتمد على تبادل الأفكار والمعلومات حول المادة الدراسية، هي:",
+        "options": [
+            "التعليم.",
+            "التدريس (Teaching).",
+            "التعلم.",
+            "التربية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 59,
+        "q": "هو نشاط يقوم به المتعلم بإشراف المعلم أو بدونه، بهدف اكتساب معرفة أو مهارة أو تغيير سلوك، وهو:",
+        "options": [
+            "التدريس.",
+            "التعليم.",
+            "التعلم (Learning).",
+            "التربية."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 60,
+        "q": "من خصائص عملية التعلم أن التغير الحاصل فيه هو:",
+        "options": [
+            "تغير مؤقت يزول بسرعة.",
+            "تغير شبه دائم في السلوك.",
+            "تغير وهمي غير قابل للقياس.",
+            "تغير جسمي بحت."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 61,
+        "q": "خاصية تعني أن التعلم يحدث بين المتعلم والبيئة ويكون التفاعل بينهم عملياً، أو حركياً، أو حسياً، أو كلامياً، أو لغوياً، أو تأملياً استدلالياً، وهي:",
+        "options": [
+            "الاستمرارية.",
+            "التفاعلية.",
+            "الشمولية.",
+            "التطور."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 62,
+        "q": "خاصية التعلم التي تبدأ من طفولة الفرد وتكمله معه إلى آخر حياته تسمى بـ:",
+        "options": [
+            "التراكمية.",
+            "الاستمرارية.",
+            "الشمولية.",
+            "احتمالية القصد."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 63,
+        "q": "الإنسان يراكم خبرات كلما تقدم في السن. هذه الخاصية من خصائص التعلم هي:",
+        "options": [
+            "التراكمية والتدريج.",
+            "الشمولية.",
+            "العرضية.",
+            "التفاعلية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 64,
+        "q": "خاصية للتعلم تعني الاهتمام بكل السلوكيات والخبرات هي:",
+        "options": [
+            "الاستمرارية.",
+            "الشمولية.",
+            "احتمالية القصد.",
+            "التطور."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 65,
+        "q": "أن يكون التعليم بطريق موجه مقصود لتحقيق هدف ما، أو غير مقصود وجاء بشكل عرضي، يعبر عن خاصية:",
+        "options": [
+            "التطور.",
+            "احتمالية القصد أو عدمه.",
+            "التراكمية.",
+            "الاستمرارية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 66,
+        "q": "نجد الكثير من التغيرات والتطورات في العملية التعليمية من حيث الأساليب والمعلومات والطرق والإمكانات. هذا يمثل خاصية:",
+        "options": [
+            "التطور.",
+            "الشمولية.",
+            "الاستمرارية.",
+            "التفاعلية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 67,
+        "q": "كل ما يتعلمه الإنسان يؤثر فيه وفي حياته وأسلوب تفكيره، ونجد ذلك جلياً من خلال استجابته وتغيره وتغيير طريقته في الحياة أو أسلوبه أو تفكيره وحتى آرائه. هذه الخاصية هي:",
+        "options": [
+            "الربط بين المؤثرات والاستجابات.",
+            "الشمولية والتدرج.",
+            "احتمالية القصد.",
+            "التفاعلية الحركية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 68,
+        "q": "من العوامل المؤثرة في التعلم، العامل الذي يحدد القدرات الحركية والعقلية والجسدية وفاعلية التعلم هو:",
+        "options": [
+            "خصائص المتعلم.",
+            "سلوك المعلم.",
+            "المادة الدراسية.",
+            "البيئة المدرسية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 69,
+        "q": "وجود تفاعل دائم بين سلوك المعلم والمتعلم مما يؤثر على نتائج عملية التعلم يعبر عن العامل المؤثر المسمى بـ:",
+        "options": [
+            "البيئة المدرسية.",
+            "سلوك المعلم والمتعلم.",
+            "تأثير القوى الخارجية.",
+            "أنماط التعلم."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 70,
+        "q": "بمعنى توفر الوسائل التعليمية والتجهيزات التعليمية اللازمة لزيادة فاعلية التعلم، وهذا يمثل:",
+        "options": [
+            "خصائص المتعلم.",
+            "البيئة المدرسية.",
+            "نظرة المجتمع إلى المدرسة.",
+            "أنماط التعلم."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 71,
+        "q": "يجب عرض المادة وتنظيمها بشكل واضح لزيادة فاعلية التعلم، وهذا يتعلق بعامل:",
+        "options": [
+            "المادة الدراسية.",
+            "سلوك المعلم.",
+            "تأثير القوى الخارجية.",
+            "خصائص المتعلم."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 72,
+        "q": "مثل البيئة الثقافية، والمنزل، والجيران، تؤثر بشكل مباشر أو غير مباشر في التعلم تحت عامل:",
+        "options": [
+            "تأثير القوى الخارجية.",
+            "البيئة المدرسية.",
+            "المادة الدراسية.",
+            "أنماط التعلم."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 73,
+        "q": "نظرة المجتمع إلى المدرسة تؤثر في عملية التعليم وفاعليتها، وهي تعتبر من العوامل المؤثرة في:",
+        "options": [
+            "التعلم.",
+            "النمو البيولوجي فقط.",
+            "الوراثة الفطرية.",
+            "الفروق الفردية العضوية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 74,
+        "q": "وهي طريقة اكتساب المعرفة، وكل طالب له طريقته المميزة في التعلم، ويعرف بـ:",
+        "options": [
+            "سلوك المعلم.",
+            "أنماط التعلم.",
+            "المادة الدراسية.",
+            "خصائص المتعلم."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 75,
+        "q": "من العوامل الخارجية المؤثرة على التعلم والتدريس:",
+        "options": [
+            "الذكاء الفطري.",
+            "تقنيات التدريس، المنهج، البيئة، الوسائل التعليمية، العقاب والتعزيز.",
+            "الاستعداد الوراثي البحت.",
+            "العمر الزمني للمتعلم."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 76,
+        "q": "من مبادئ التعلم الجيد والفعال:",
+        "options": [
+            "تشجيع المتعلمين على التفاعل والتواصل المستمر مع أعضاء الهيئة التدريسية ومع بعضهم البعض.",
+            "الاعتماد على التلقين الفردي المستمر.",
+            "إلغاء استخدام تقنية التغذية الراجعة.",
+            "تقليل وقت التعلم للحد الأدنى."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 77,
+        "q": "أي من الآتي يعتبر مبدءاً أساسياً من مبادئ التعلم الجيد؟",
+        "options": [
+            "استخدام تقنية التغذية الراجعة.",
+            "وضع توقعات منخفضة لجميع فئات المتعلمين.",
+            "عزل الطلاب عن بعضهم البعض لضمان الهدوء.",
+            "تنوع طرق التعلم بشكل عشوائي دون خطة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 78,
+        "q": "توفير وقت كافي من أجل التعلم، ووضع التوقعات الكبيرة على جميع فئات المتعلمين، يعد من:",
+        "options": [
+            "مبادئ التعلم الجيد.",
+            "مشكلات المراحل العمرية.",
+            "خصائص النمو العقلي.",
+            "نظريات الشخصية عند إريكسون."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 79,
+        "q": "المساعدة على تنوع طرق التعلم وتشجيع الطلاب على التعلم النشط يعد من ركائز:",
+        "options": [
+            "مبادئ التعلم الجيد.",
+            "العوامل الوراثية للفروق الفردية.",
+            "قياس الذكاء المعرفي.",
+            "مراحل نمو اللغة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 80,
+        "q": "تتأثر عملية التعلم بعوامل متعددة؛ فالعامل الذي يعنى بتوفير الأدوات والأجهزة والتجهيزات داخل المدرسة هو:",
+        "options": [
+            "البيئة المدرسية.",
+            "تأثير القوى الخارجية.",
+            "أنماط التعلم.",
+            "خصائص المتعلم."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 81,
+        "q": "إذا كان الطالب يعتمد على أسلوب خاص به في اكتساب المعرفة وتفضيله لطريقة معينة، فإننا نتحدث عن:",
+        "options": [
+            "أنماط التعلم.",
+            "المادة الدراسية.",
+            "البيئة الثقافية.",
+            "سلوك المعلم."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 82,
+        "q": "عندما يقال إن \"التعلم عملية تبدأ من طفولة الفرد ويكمل معه إلى آخر حياته\"، فهذا يصف خصائص:",
+        "options": [
+            "الاستمرارية.",
+            "التفاعلية.",
+            "الشمولية.",
+            "التطور."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 83,
+        "q": "أي من الآتي يمثل تعريفاً دقيقاً لـ \"التدريس\" (Teaching)؟",
+        "options": [
+            "مجموعة العمليات التي يستطيع المجتمع أن ينقل معارفه بها.",
+            "مجموعة من النشاطات المشتركة بين الطلاب والمدرسين وتعتمد على تبادل الأفكار والمعلومات.",
+            "نشاط يقوم به المتعلم بهدف اكتساب مهارة أو تغيير سلوك.",
+            "خبرات ومعارف يتم نقلها من المعلم بطرق معينة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 84,
+        "q": "التعلم الذي قد يكون بطريق موجه مقصود لتحقيق هدف ما، أو غير مقصود وجاء بشكل عرضي، يعكس خصائص:",
+        "options": [
+            "احتمالية القصد أو عدمه.",
+            "التراكمية.",
+            "الشمولية المطلقة.",
+            "الاستمرارية الزمنية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 85,
+        "q": "عندما يؤثر كل ما يتعلمه الإنسان في طريقة حياته وتفكيره واستجابته، فإننا نطبق خاصية:",
+        "options": [
+            "الربط بين المؤثرات والاستجابات.",
+            "التطور السريع.",
+            "الشمولية المجرّدة.",
+            "التفاعلية الحركية. أسئلة شاملة ومتقدمة في القياس والتقويم التربوي العام"
+        ],
+        "correct": 0
+    },
+    {
+        "num": 86,
+        "q": "وفقاً لنظرية بياجيه، في أي مرحلة يبدأ الطفل في تكوين مفهوم \"الاحتفاظ وثبات الخصائص\" (مثل ثبات الكمية والطول)؟",
+        "options": [
+            "الحسية الحركية.",
+            "ما قبل العمليات.",
+            "العمليات المادية أو الحسية (من 7 - 11 سنة).",
+            "التفكير المجرد."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 87,
+        "q": "المرحلة العمرية التي يبدأ فيها الطفل بالمشي ونطق الكلمات الأولى (بداية الكلام) في مرحلة الحسية الحركية عند بياجيه هي:",
+        "options": [
+            "من الولادة حتى سنتين.",
+            "من 2 إلى 4 سنوات.",
+            "من 7 إلى 11 سنة.",
+            "من 12 إلى 15 سنة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 88,
+        "q": "في نظرية إريكسون، إذا أخفق الطفل في مرحلة الرضاعة في تكوين الثقة، فإنه يطور:",
+        "options": [
+            "الشعور بالخجل والانطواء.",
+            "تشوش الهوية.",
+            "الشعور بالذنب والدفاع.",
+            "اليأس والركود."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 89,
+        "q": "يُعنى بمصطلح \"التوازن\" في نظرية بياجيه للنمو المعرفي بأنه:",
+        "options": [
+            "عملية عقلية توازن بين الاستوعاب والملاءمة لتكييف الفرد مع بيئته.",
+            "عامل أساسي من عوامل النمو إلى جانب النضج والتفاعل الاجتماعي.",
+            "توازن عضلي حركي في أطراف الطفل.",
+            "استقرار انفعالي ضد مخاوف المراهقة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 90,
+        "q": "وفقاً لنظرية برونر، النشاط الذي يعتمد على استخدام الصور العقلية وتفكير الفرد بما حوله دون الحاجة للحركة المباشرة يسمى:",
+        "options": [
+            "النشاط الرمزي.",
+            "النشاط التخيلي.",
+            "النشاط العملي.",
+            "النشاط الانفعالي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 91,
+        "q": "العامل الوراثي في الفروق الفردية يظهر بوضوح في نقل:",
+        "options": [
+            "الصفات الأساسية من الآباء إلى الأبناء.",
+            "الخبرات المكتسبة بالتدريب.",
+            "المهارات التكنولوجية الحديثة.",
+            "القواعد اللغوية الاجتماعية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 92,
+        "q": "عندما نقول إن \"الفروق الفردية هي فروق في الدرجة وليست في النوع\"، فهذا يعني أن الأفراد يمتلكون نفس الصفات والقدرات ولكنهم يختلفون في:",
+        "options": [
+            "نوع الصفة وجودتها الأساسية.",
+            "مقدار أو مستوى امتلاك تلك الصفة أو الدرجة.",
+            "الوراثة البيولوجية فقط.",
+            "انتمائهم البيئي والاجتماعي."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 93,
+        "q": "واحدة من الآتي لا تعتبر من خصائص الفروق الفردية الواردة في المراجع التربوية:",
+        "options": [
+            "عمومية الفروق الفردية.",
+            "قابلية الفروق الفردية للقياس.",
+            "توحيد القدرات العقلية لجميع الطلاب تماماً.",
+            "ثبات الفروق الفردية المعرفية."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 94,
+        "q": "التقسيم الإداري للطلاب بناءً على درجات الذكاء في بعض الدول ينتقد بأنه قد يؤدي إلى:",
+        "options": [
+            "شعور التلاميذ بالتمايز والتعالي أو الدونية.",
+            "زيادة التجانس الإيجابي المطلق.",
+            "إلغاء الفروق العقلية نهائياً.",
+            "ارتفاع التحصيل لجميع الفئات بالتساوي."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 95,
+        "q": "أي من أساليب المعلم في مراعاة الفروق الفردية يهدف إلى كسر الجمود الحركي وتجديد انتباه الطلاب داخل الفصل؟",
+        "options": [
+            "الصمت.",
+            "التنويع الحركي (تغيير موقع المعلم).",
+            "تحويل التفاعل.",
+            "استخدام الحواس الخمس."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 96,
+        "q": "\"لكل طالب خمس حواس، وعليه أن يعد درسه بحيث يخاخ كل قنوات الاتصال\". هذا الأسلوب يعبر عن:",
+        "options": [
+            "التنويه الصوتي.",
+            "التنويع في استخدام الحواس.",
+            "التنوع الحركي.",
+            "التنويع في أساليب التدريب."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 97,
+        "q": "عندما يسأل المعلم طالباً، ثم يطلب من طالب آخر التعليق على إجابة زميله، ثم يدور نقاش بين الطلاب أنفسهم، فإن المعلم يستخدم أسلوب:",
+        "options": [
+            "الصمت.",
+            "تحويل التفاعل.",
+            "التنويع الحركي.",
+            "تعزيز السلوك."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 98,
+        "q": "أي من النتائج التالية يتحقق عند مراعاة الفروق الفردية بدقة داخل المؤسسة التعليمية؟",
+        "options": [
+            "زيادة الفاقد التعليمي.",
+            "الوصول بمستويات الطلاب إلى الأهداف المنشودة والارتفاع بمخرجات العملية التعليمية.",
+            "تعزيز الفروق السلبية بين الضعفاء والمميزين.",
+            "تقليل أعداد الطلاب في المدارس."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 99,
+        "q": "في هرم ماسلو، الحاجة إلى تقدير الذات والاحترام تسبق مباشرة حاجة:",
+        "options": [
+            "الأمن.",
+            "الحاجات الفسيولوجية.",
+            "تحقيق الذات (القمة).",
+            "الحاجات الاجتماعية."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 100,
+        "q": "العمليات التي يستطيع المجتمع أن ينقل معارفه وأهدافه المكتسبة من خلالها لكي يحافظ على بقائه تسمى:",
+        "options": [
+            "التعليم.",
+            "التدريس.",
+            "التربية.",
+            "التعلم."
+        ],
+        "correct": 2
+    },
+    {
+        "num": 101,
+        "q": "يختلف \"التعليم\" (Instruction) عن \"التدريس\" (Teaching) في كون التعليم هو:",
+        "options": [
+            "مجموعة نشاطات مشتركة لتبادل الأفكار.",
+            "نقل خبرات ومعارف ومعلومات من المعلم إلى المتعلم بهدف الوصول إلى أهداف معينة ومحددة.",
+            "نشاط يقوم به المتعلم بمفرده لاكتساب مهارة.",
+            "نظام اجتماعي عام للحفاظ على التراث."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 102,
+        "q": "خاصية التعلم التي تعني أن الفرد يراكم خبرات كلما تقدم في العمر والسن هي:",
+        "options": [
+            "الشمولية.",
+            "التراكمية والتدريج.",
+            "الاستمرارية.",
+            "التفاعلية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 103,
+        "q": "أي من العوامل المؤثرة في التعلم يرتبط ارتباطاً مباشراً بمدى توفر الوسائل التعليمية والتجهيزات المدرسية المناسبة؟",
+        "options": [
+            "خصائص المتعلم.",
+            "البيئة المدرسية.",
+            "أنماط التعلم.",
+            "نظرة المجتمع إلى المدرسة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 104,
+        "q": "تأثير القوى الخارجية مثل البيئة الثقافية والمنزل والجيران على عملية التعلم يعد عاملاً مؤثراً يتمثل في:",
+        "options": [
+            "العامل رقم (5) من العوامل المؤثرة في التعلم.",
+            "خصائص المتعلم الفردية.",
+            "سلوك المعلم الصفي.",
+            "المادة الدراسية وتنظيمها."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 105,
+        "q": "واحدة من الآتي تعتبر من مبادئ التعلم الجيد:",
+        "options": [
+            "إهمال استخدام تقنية التغذية الراجعة.",
+            "تشجيع المتعلمين على التفاعل والتواصل المستمر مع أعضاء الهيئة التدريسية ومع بعضهم.",
+            "وضع توقعات منخفضة لجميع الطلاب.",
+            "تقليل الوقت المخصص للتعلم لزيادة الضغط."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 106,
+        "q": "في مراحل نمو إريكسون، المرحلة السادسة (18 - 24 سنة) ترتبط بـ:",
+        "options": [
+            "الألفة مقابل العزلة (الحب).",
+            "الإنتاجية مقابل الركود.",
+            "التكامل مقابل اليأس.",
+            "الثقة مقابل عدم الثقة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 107,
+        "q": "الطفل في مرحلة ما قبل العمليات عند بياجيه يتميز بالتفكير \"الحدسي\"، والذي يظهر بوضوح في الفئة العمرية:",
+        "options": [
+            "من الولادة إلى سنتين.",
+            "من 4 إلى 7 سنوات.",
+            "من 7 إلى 11 سنة.",
+            "من 12 إلى 18 سنة."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 108,
+        "q": "القدرة على استعادة الأحداث الحقيقية في صورة فكرة واكتساب خاصية العكسية تتميز بها مرحلة:",
+        "options": [
+            "العمليات المادية (الحسية).",
+            "الحسية الحركية.",
+            "ما قبل العمليات.",
+            "التفكير المجرد."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 109,
+        "q": "تظهر القدرة على التفكير المنطقي ووضع الفرضيات والاحتمالات واختيار الأنسب في مرحلة:",
+        "options": [
+            "العمليات المادية.",
+            "التفكير المجرد.",
+            "ما قبل العمليات.",
+            "الحسية الحركية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 110,
+        "q": "من أساليب مراعاة الفروق الفردية في أساليب التدريب:",
+        "options": [
+            "التنويع في أساليب التدريب مثل الحوار وتمثيل الأدوار والقصة والعصف الذهني.",
+            "استخدام طريقة التلقين الفردي المطلق.",
+            "الاعتماد على القراءة الصامتة الدائمة.",
+            "إلغاء الأنشطة الجماعية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 111,
+        "q": "يعني \"التنوع الحركي\" للمعلم أثناء التدريس في الفصل بـ:",
+        "options": [
+            "تغيير المعلم لموقعه في حجرة الدرس.",
+            "حركة الطلاب العشوائية بين المقاعد.",
+            "ممارسة الرياضة الصباحية.",
+            "نقل الوسائل التعليمية من فصل لآخر."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 112,
+        "q": "أهمية اكتشاف الفروق الفردية في جانب \"الإعداد المهني والوظيفي للحياة\" تتمثل في:",
+        "options": [
+            "وضع الفرد المناسب في العمل المناسب بناءً على قدراته.",
+            "مساعدة الفرد على تكوين أخلاق حسنة.",
+            "زيادة الصحة النفسية العامة.",
+            "فهم تصرفات الآخرين بدقة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 113,
+        "q": "العامل المؤثر في الفروق الفردية الذي يشير إلى أن \"كلما تقدم الناس في العمر زادت فروقهم المعرفية\" هو:",
+        "options": [
+            "العمر الزمني.",
+            "الوراثة الفطرية.",
+            "الجنس.",
+            "الاستعداد الفطري."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 114,
+        "q": "في هرم ماسلو، أي من الحاجات التالية تقع في قمة الهرم مباشرة؟",
+        "options": [
+            "الحاجات الفسيولوجية.",
+            "حاجة تحقيق الذات.",
+            "حاجة الأمن.",
+            "حاجات التقدير."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 115,
+        "q": "مفهوم \"التعليم\" (Instruction) يركز أساساً على:",
+        "options": [
+            "نقل خبرات ومعارف ومعلومات محددة من المعلم للمتعلم لتحقيق أهداف معينة.",
+            "التجدد المستمر لتراث المجتمع.",
+            "الأنشطة اللاصفية العشوائية.",
+            "التغير شبه الدائم في السلوك الناتج عن الخبرة."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 116,
+        "q": "النشاط الذي يقوم به المتعلم بهدف اكتساب معرفة أو مهارة أو تغيير سلوك (سواء بإشراف المعلم أو بدونه) يسمى:",
+        "options": [
+            "التدريس.",
+            "التعلم (Learning).",
+            "التعليم.",
+            "التربية."
+        ],
+        "correct": 1
+    },
+    {
+        "num": 117,
+        "q": "واحدة من الآتي تعد من النتائج المباشرة لمراعاة الفروق الفردية للطلاب في المدرسة:",
+        "options": [
+            "الارتفاع بمخرجات العملية التعليمية.",
+            "زيادة نسبة التسرب المدرسي.",
+            "توحيد مستويات جميع الطلاب بالقوة.",
+            "تقليل الأنشطة الصفية."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 118,
+        "q": "طريقة \"التعليم الجماعي\" في إدارة وتنفيذ المنهج الدراسي تتميز بـ:",
+        "options": [
+            "الاعتماد على مجموعة من المعلمين يقومون بمسؤولية التخطيط والتنفيذ لموضوع معين.",
+            "عزل الطلاب تماماً عن بعضهم.",
+            "إلغاء دور الإرشاد التربوي.",
+            "اعتماد كل معلم على منهج خاص به مختلف عن زملائه."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 119,
+        "q": "وفقاً لنظرية بياجيه، في مرحلة ما قبل العمليات، يمر الطفل بما يسمى بـ:",
+        "options": [
+            "التفكير الحدسي (من 4 - 7 سنوات).",
+            "التفكير المجرد البحت.",
+            "حل المسائل الرياضية المعقدة.",
+            "التفكير الاستدلالي المنظم."
+        ],
+        "correct": 0
+    },
+    {
+        "num": 120,
+        "q": "يُقصد بـ \"مدى الفروق الفردية\" بين الطلاب بأنه:",
+        "options": [
+            "الفرق بين أعلى درجة وأقل درجة في الصفات المختلفة.",
+            "الانحراف المعياري للذكاء العام فقط.",
+            "التشابه المطلق في الاستجابات الصفية.",
+            "التباين الزمني بين مراحل النمو البشري."
+        ],
+        "correct": 0
+    }
+];
+
+        // خلط Fisher–Yates يغير مواقع الاختيارات في كل محاولة، مع حفظ الإجابة الصحيحة.
+        const originalQuizData = quizData.map(question => ({
+            ...question, options: [...question.options]
+        }));
+        function shuffledQuestion(question) {
+            const choices = question.options.map((text, index) => ({ text, isCorrect: index === question.correct }));
+            for (let i = choices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [choices[i], choices[j]] = [choices[j], choices[i]];
+            }
+            return {
+                ...question,
+                options: choices.map(choice => choice.text),
+                correct: choices.findIndex(choice => choice.isCorrect)
+            };
+        }
+        function prepareAttempt() {
+            originalQuizData.forEach((question, index) => {
+                quizData[index] = shuffledQuestion(question);
+            });
+        }
+        prepareAttempt();
+        const letters = ["أ", "ب", "ج", "د"];
+        let currentQIndex = 0;
+        let score = 0;
+        const answersState = {}; // لتخزين حالة إجابات المستخدم
+        let professionalView = false;
+        const encourageBefore = [
+            '💡 شجّع طلابك على المحاولة: اختر الإجابة التي تراها صحيحة، ثم تحقّق من الحل.',
+            '🌟 لا تتعجل — اقرأ الخيارات كلها ثم اختر بثقة.',
+            '🎯 فرصة رائعة للتدريب: حاول أولاً ثم راجع الإجابة الصحيحة.',
+            '🚀 أنت قادر على الحل، فقط فكّر بهدوء وحدد الأنسب.'
+        ];
+        const encourageSuccess = [
+            'أحسنت جدًا! ✅ إجابة موفقة، استمر على هذا التميّز.',
+            'رائع يا بطل 👏 إجابتك صحيحة، واصل النجاح.',
+            'ممتاز 🌟 اختيار صحيح يدل على فهم جميل.',
+            'إجابة صحيحة 💚 استمر بنفس التركيز.'
+        ];
+        const encourageRetry = [
+            'محاولة جيدة 💛 راجع السؤال مرة أخرى وستصل للإجابة الصحيحة.',
+            'لا بأس 🌷 الخطأ خطوة نحو التعلّم، حاول من جديد.',
+            'استمر في المحاولة ✨ بالتفكير الهادئ ستنجح.',
+            'أنت قريب من الحل 🎯 اقرأ الخيارات مجددًا وتعلّم من التصحيح.'
+        ];
+        function randomPick(list){ return list[Math.floor(Math.random()*list.length)]; }
+        function updateEncouragement() {
+            const box = document.getElementById('student-encourage');
+            if (!box) return;
+            box.className = 'student-encourage';
+            if (!quizData.length || !answersState.hasOwnProperty(currentQIndex)) {
+                box.textContent = randomPick(encourageBefore);
+                return;
+            }
+            const item = quizData[currentQIndex];
+            const ok = answersState[currentQIndex] === item.correct;
+            box.textContent = ok ? randomPick(encourageSuccess) : randomPick(encourageRetry);
+            box.classList.add(ok ? 'success' : 'retry');
+        }
+        function toggleProfessionalView() {
+            professionalView = !professionalView;
+            const pro = document.getElementById('pro-student-screen');
+            const standard = document.getElementById('standard-card-body');
+            const btn = document.getElementById('btn-pro-mode');
+            if (pro) pro.style.display = professionalView ? 'block' : 'none';
+            if (standard) standard.style.display = professionalView ? 'none' : 'flex';
+            if (btn) {
+                btn.classList.toggle('active', professionalView);
+                btn.innerHTML = professionalView ? '📘 العرض العادي' : '✨ شاشة احترافية';
+            }
+            updateEncouragement();
+        }
+        function currentStudentText() {
+            const item = quizData[currentQIndex];
+            if (!item) return '#الرخصة-المهنية_عام';
+            const lines = [
+                '#الرخصة-المهنية_عام',
+                '📘 الرخصة المهنية عام | المعيار الأول',
+                'الالتزام بالقيم الإسلامية الوسطية، وأخلاقيات المهنة، وتعزيز الهوية الوطنية',
+                '',
+                `❓ السؤال ${item.num}: ${item.q}`,
+                ...item.options.map((choice, index) => `${letters[index]}) ${choice}`),
+                '',
+                '🧠 شجّع نفسك على الحل أولاً ثم راجع الإجابة.',
+                '✍️ إعداد: إبراهيم أبوزيد | معلم ومدرب وباحث',
+                '📢 قناة الرخصة المهنية عام:',
+                CHANNEL_URL,
+                '📞 واتساب / تواصل: ‎+966 55 783 1353‎'
+            ];
+            return lines.join('\n');
+        }
+        async function copyQuestionOnly() {
+            const feedback = document.getElementById('student-copy-feedback');
+            const message = currentStudentText();
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(message);
+                } else {
+                    const area = document.createElement('textarea');
+                    area.value = message;
+                    area.style.cssText = 'position:fixed;left:-9999px;top:0';
+                    document.body.appendChild(area);
+                    area.focus(); area.select();
+                    const success = document.execCommand('copy');
+                    area.remove();
+                    if (!success) throw new Error('copy failed');
+                }
+                feedback.textContent = '✓ تم نسخ السؤال والخيارات بنجاح.';
+            } catch (e) {
+                feedback.textContent = 'تعذر النسخ التلقائي من المتصفح.';
+            }
+        }
+        function shareStudentQuestion() {
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(currentStudentText()), '_blank', 'noopener,noreferrer');
+        }
+
+        function loadQuestion() {
+            if (quizData.length === 0) {
+                document.getElementById("q-badge").innerText = "قالب جاهز";
+                document.getElementById("q-text").innerText = "سيتم عرض الأسئلة الجديدة هنا بعد إضافتها.";
+                document.getElementById("question-count").innerText = "الأسئلة: 0";
+                document.getElementById("progress-bar").style.width = "0%";
+                document.getElementById("options-container").innerHTML = "";
+                const proOpt = document.getElementById('pro-options-container'); if (proOpt) proOpt.innerHTML = '';
+                const proQ = document.getElementById('pro-q-text'); if (proQ) proQ.innerText = "سيتم عرض الأسئلة الجديدة هنا بعد إضافتها.";
+                const proB = document.getElementById('pro-q-badge'); if (proB) proB.innerText = 'قالب جاهز';
+                document.getElementById("btn-prev").disabled = true;
+                document.getElementById("btn-next-top").disabled = true;
+                updateEncouragement();
+                return;
+            }
+            const currentData = quizData[currentQIndex];
+            document.getElementById("q-badge").innerText = `سؤال ${currentData.num}`;
+            document.getElementById("q-text").innerText = currentData.q;
+            document.getElementById("question-count").innerText = `السؤال ${currentQIndex + 1} من ${quizData.length}`;
+            document.getElementById("btn-next-top").innerText = currentQIndex === quizData.length - 1 ? "عرض النتيجة" : "التالي ⬅";
+            document.getElementById("progress-bar").style.width = `${((currentQIndex + 1) / quizData.length) * 100}%`;
+            document.getElementById("btn-prev").disabled = (currentQIndex === 0);
+            document.getElementById("btn-next-top").disabled = false;
+
+            const proBadge = document.getElementById('pro-q-badge');
+            const proText = document.getElementById('pro-q-text');
+            if (proBadge) proBadge.innerText = `سؤال ${currentData.num}`;
+            if (proText) proText.innerText = currentData.q;
+
+            const hasAnswered = answersState.hasOwnProperty(currentQIndex);
+            const userPick = answersState[currentQIndex];
+
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+            currentData.options.forEach((opt, index) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerHTML = `
+                    <span class="opt-letter">${letters[index]}</span>
+                    <span class="opt-text">${opt}</span>
+                `;
+                if (hasAnswered) {
+                    btn.setAttribute("disabled", "true");
+                    if (index === currentData.correct) btn.classList.add("correct");
+                    else if (index === userPick) btn.classList.add("wrong");
+                } else {
+                    btn.onclick = () => selectOption(index);
+                }
+                optionsContainer.appendChild(btn);
+            });
+
+            const proOptionsContainer = document.getElementById('pro-options-container');
+            if (proOptionsContainer) {
+                proOptionsContainer.innerHTML = '';
+                currentData.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'student-option';
+                    btn.innerHTML = `<span class="student-option-letter">${letters[index]}</span><span class="student-option-text">${opt}</span>`;
+                    if (hasAnswered) {
+                        btn.setAttribute('disabled', 'true');
+                        if (index === currentData.correct) btn.classList.add('correct');
+                        else if (index === userPick) btn.classList.add('wrong');
+                    } else {
+                        btn.onclick = () => selectOption(index);
+                    }
+                    proOptionsContainer.appendChild(btn);
+                });
+            }
+            updateEncouragement();
+        }
+
+        function selectOption(selectedIndex) {
+            if (answersState.hasOwnProperty(currentQIndex)) return;
+            answersState[currentQIndex] = selectedIndex;
+            const currentData = quizData[currentQIndex];
+            if (selectedIndex === currentData.correct) {
+                score++;
+                document.getElementById("score-count").innerText = `النقاط: ${score}`;
+            }
+            loadQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < quizData.length - 1) {
+                currentQIndex++;
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                loadQuestion();
+            }
+        }
+
+        function showResult() {
+            document.getElementById("btn-prev").style.display = 'none';
+            document.getElementById("btn-next-top").style.display = 'none';
+            document.getElementById("quiz-screen").style.display = "none";
+            document.getElementById("result-screen").style.display = "block";
+            document.getElementById("final-score").innerText = `${score} / ${quizData.length}`;
+            
+            const percentage = (score / quizData.length) * 100;
+            let msg = "";
+            if (percentage >= 90) msg = "ممتاز جداً! إلمام ممتاز بالمعايير العامة.";
+            else if (percentage >= 75) msg = "أداء رائع جداً! استمر في المراجعة والتدريب.";
+            else if (percentage >= 50) msg = "أداء جيد، ينصح بمراجعة الأسئلة التي تعثرت بها.";
+            else msg = "تحتاج لمزيد من القراءة والمراجعة الدقيقة للمعايير العامة.";
+            
+            document.getElementById("result-message").innerText = msg;
+        }
+
+        function restartQuiz() {
+            document.getElementById("btn-prev").style.display = '';
+            document.getElementById("btn-next-top").style.display = '';
+            currentQIndex = 0;
+            score = 0;
+            for (let key in answersState) delete answersState[key];
+            prepareAttempt();
+            document.getElementById("score-count").innerText = `النقاط: 0`;
+            document.getElementById("result-screen").style.display = "none";
+            document.getElementById("quiz-screen").style.display = "block";
+            loadQuestion();
+        }
+
+        function exportToPDF() {
+            try {
+                const root = document.getElementById('pdf-export-root');
+                if (!root) throw new Error('وعاء تصدير PDF غير موجود.');
+                if (!Array.isArray(quizData) || !quizData.length) throw new Error('لا توجد أسئلة للتصدير.');
+
+                const qrSource = document.querySelector('.bottom-footer .qr-css');
+                const qrMarkup = qrSource ? qrSource.outerHTML : '<div style="font-size:11px;font-weight:900;color:#0f456f">QR</div>';
+
+                const esc = (text) => String(text ?? '').replace(/[&<>"']/g, ch => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                }[ch]));
+
+                const letters = ['أ','ب','ج','د','هـ','و'];
+
+                root.innerHTML = '';
+                root.style.display = 'block';
+                root.style.position = 'absolute';
+                root.style.right = '-100000px';
+                root.style.top = '0';
+                root.style.visibility = 'visible';
+
+                function createPage(pageNo) {
+                    const page = document.createElement('section');
+                    page.className = 'pdf-page';
+                    page.innerHTML = `
+                        <div class="pdf-topbar">
+                            <div class="pdf-top-pill">المعيار الأول</div>
+                            <div class="pdf-title-wrap">
+                                <div class="pdf-main-title">الرخصة المهنية عام — الالتزام بالقيم الإسلامية الوسطية</div>
+                                <div class="pdf-sub-title"></div>
+                            </div>
+                            <div class="pdf-meta-top">إبراهيم أبوزيد | صفحة <span class="pdf-page-no">${pageNo}</span><br>☎ <span class="pdf-ltr-inline">+966 55 783 1353</span><br>✈ <span class="pdf-ltr-inline">@myibhistoricy</span></div>
+                        </div>
+                        <div class="pdf-page-content">
+                            <div class="pdf-grid"></div>
+                        </div>
+                        <div class="pdf-footerbar pdf-lux-footer" dir="rtl">
+                            <div class="pdf-lux-item pdf-lux-name"><span class="pdf-lux-mark">★</span><span>إبراهيم أبوزيد</span></div>
+                            <div class="pdf-lux-separator"></div>
+                            <div class="pdf-lux-item"><span class="pdf-lux-mark">☎</span><b class="pdf-ltr-inline" dir="ltr">+966 55 783 1353</b></div>
+                            <div class="pdf-lux-separator"></div>
+                            <div class="pdf-lux-item"><span class="pdf-lux-mark">✈</span><b class="pdf-ltr-inline" dir="ltr">@myibhistoricy</b></div>
+                            <div class="pdf-lux-separator"></div>
+                            <div class="pdf-lux-item pdf-lux-channel">قناة الرخصة المهنية عام</div>
+                        </div>
+                    `;
+                    root.appendChild(page);
+                    return {
+                        page,
+                        grid: page.querySelector('.pdf-grid')
+                    };
+                }
+
+                function createCard(item) {
+                    const card = document.createElement('article');
+                    card.className = 'pdf-card';
+                    card.innerHTML = `
+                        <div class="pdf-card-num">${esc(item.num)}</div>
+                        <div class="pdf-card-title">${esc(item.q)}</div>
+                        <div class="pdf-card-options">
+                            ${(item.options || []).map((opt, idx) => `
+                                <div class="pdf-card-option ${idx === Number(item.correct) ? 'pdf-correct-option' : ''}">
+                                    <div class="pdf-card-letter">${letters[idx] || idx + 1}</div>
+                                    <div class="pdf-card-option-text">${esc(opt)}${idx === Number(item.correct) ? ' <span class="pdf-correct-mark">✓ الإجابة الصحيحة</span>' : ''}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    return card;
+                }
+
+                let pageCount = 1;
+                let current = createPage(pageCount);
+
+                quizData.forEach((item) => {
+                    const card = createCard(item);
+                    current.grid.appendChild(card);
+
+                    const cardBottom = card.getBoundingClientRect().bottom;
+                    const footerTop = current.page.querySelector('.pdf-footerbar').getBoundingClientRect().top;
+                    const overflow = current.grid.scrollHeight > current.grid.clientHeight + 1 || cardBottom > footerTop - 12;
+                    if (overflow) {
+                        current.grid.removeChild(card);
+                        pageCount += 1;
+                        current = createPage(pageCount);
+                        current.grid.appendChild(card);
+                    }
+                });
+
+                root.querySelectorAll('.pdf-page').forEach((page, i) => {
+                    const no = page.querySelector('.pdf-page-no');
+                    if (no) no.textContent = `${i + 1}`;
+                });
+
+                root.style.position = '';
+                root.style.right = '';
+                root.style.top = '';
+                root.style.visibility = '';
+                root.offsetHeight;
+                window.print();
+
+                // Do not clear the print tree while the browser is still generating PDF.
+                // Rebuild it on the next export; keeping it hidden outside print is harmless.
+                root.style.display = '';
+            } catch (error) {
+                alert('تعذر تصدير PDF: ' + (error.message || error));
+            }
+        }
+
+        async function exportToImage() {
+            try {
+                const blob = await renderCardBlob();
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `الرخصة_المهنية_عام_${quizData[currentQIndex]?.num ?? 'قالب'}.png`;
+                link.href = url;
+                link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 3000);
+                setImageFeedback('✓ تم تنزيل الصورة دون الأزرار ومع بيانات التواصل.');
+            } catch(e) {
+                setImageFeedback('تعذر تصدير الصورة؛ تحقق من اتصال الإنترنت.');
+            }
+        }
+
+
+        function getCardElementForImage(mode = 'auto') {
+            if (mode === 'professional') {
+                return document.getElementById('pro-student-screen') || document.getElementById('quiz-app');
+            }
+            if (mode === 'standard') {
+                return document.getElementById('quiz-app');
+            }
+            return professionalView ? (document.getElementById('pro-student-screen') || document.getElementById('quiz-app')) : document.getElementById('quiz-app');
+        }
+
+        async function renderCardBlob(mode = 'auto') {
+            if (typeof html2canvas !== 'function') throw new Error('مكتبة الصور غير متاحة.');
+            await document.fonts.ready;
+            const target = getCardElementForImage(mode);
+            const isProfessional = target.id === 'pro-student-screen';
+            const hiddenElements = [];
+            let contacts = null;
+            if (isProfessional) {
+                target.querySelectorAll('.student-action-row, .student-encourage, .student-copy-feedback').forEach(el => {
+                    hiddenElements.push([el, el.style.display]);
+                    el.style.display = 'none';
+                });
+                contacts = document.createElement('div');
+                contacts.setAttribute('dir', 'rtl');
+                contacts.style.cssText = 'margin-top:22px;padding:0;background:linear-gradient(135deg,#08203f 0%,#0e325c 60%,#0a2342 100%);border:2.5px solid #d4af37;border-radius:24px;text-align:center;color:#fff;font-family:Cairo,Almarai,sans-serif;overflow:hidden;box-shadow:0 16px 40px rgba(10,35,66,.18);';
+                contacts.innerHTML =
+                    '<div style="padding:14px 20px 8px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0));">' +
+                        '<div style="display:inline-block;background:linear-gradient(135deg,#f7d87b,#c89522);color:#10243f;border-radius:999px;padding:7px 18px;font-size:13px;font-weight:900;box-shadow:0 4px 12px rgba(212,175,55,.28);">#الرخصة-المهنية_عام</div>' +
+                        '<div style="margin-top:12px;color:#f7d87b;font-size:27px;font-weight:900;line-height:1.4;">إبراهيم أبوزيد</div>' +
+                        '<div style="margin-top:2px;color:#ffffff;font-size:17px;font-weight:800;opacity:.96;">معلم ومدرب وباحث</div>' +
+                        '<div style="margin-top:8px;color:#d9e8fb;font-size:14px;font-weight:800;">قناة الرخصة المهنية عام</div>' +
+                    '</div>' +
+                    '<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(245,210,121,.85),transparent);margin:0 24px 8px;"></div>' +
+                    '<div style="padding:12px 18px 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">' +
+                        '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);">' +
+                            '<div style="font-size:13px;font-weight:900;color:#f5d279;margin-bottom:6px;">📢 رابط القناة</div>' +
+                            '<div dir="ltr" style="direction:ltr;unicode-bidi:isolate;font-size:13px;line-height:1.75;font-weight:800;color:#ffffff;overflow-wrap:anywhere;">t.me/+ZakELIR9__g4NmU0</div>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);">' +
+                            '<div style="font-size:13px;font-weight:900;color:#f5d279;margin-bottom:6px;">✈️ حساب تليجرام</div>' +
+                            '<div dir="ltr" style="direction:ltr;unicode-bidi:isolate;font-size:13px;line-height:1.75;font-weight:800;color:#ffffff;overflow-wrap:anywhere;">@myibhistoricy</div>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:12px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);">' +
+                            '<div style="font-size:13px;font-weight:900;color:#f5d279;margin-bottom:6px;">📞 واتساب / تواصل</div>' +
+                            '<div dir="ltr" style="direction:ltr;unicode-bidi:isolate;font-size:18px;line-height:1.6;font-weight:900;color:#ffffff;">+966 55 783 1353</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div style="padding:0 20px 18px;color:#cbdcf3;font-size:12px;font-weight:700;">محتوى تدريبي احترافي للرخصة المهنية العامة — نسخ ومشاركة جاهزة للنشر</div>';
+                target.appendChild(contacts);
+            }
+            let canvas;
+            try {
+                canvas = await html2canvas(target, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    scrollX: 0,
+                    scrollY: -window.scrollY
+                });
+            } finally {
+                hiddenElements.forEach(([el, oldDisplay]) => { el.style.display = oldDisplay; });
+                if (contacts) contacts.remove();
+            }
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            if (!blob) throw new Error('تعذر إنشاء الصورة.');
+            return blob;
+        }
+
+        function setImageFeedback(message) {
+            const ids = ['share-feedback', 'student-copy-feedback'];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = message;
+            });
+        }
+
+        async function copyCurrentCardAsImage(mode = 'auto') {
+            setImageFeedback('جارٍ تجهيز الصورة للنسخ...');
+            try {
+                const blob = await renderCardBlob(mode);
+                if (navigator.clipboard && window.ClipboardItem) {
+                    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                    setImageFeedback('✓ تم نسخ البطاقة الحالية كصورة. يمكنك لصقها مباشرة.');
+                } else {
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.href = url;
+                    link.download = `الرخصة_المهنية_عام_سؤال_${quizData[currentQIndex]?.num ?? 'بطاقة'}.png`;
+                    link.click();
+                    setTimeout(() => URL.revokeObjectURL(url), 3000);
+                    setImageFeedback('المتصفح لا يدعم نسخ الصور مباشرة؛ تم تنزيل الصورة بدلًا من ذلك.');
+                }
+            } catch (error) {
+                setImageFeedback('تعذر نسخ الصورة من هذا المتصفح.');
+            }
+        }
+
+
+        const CHANNEL_URL = 'https://t.me/+ZakELIR9__g4NmU0';
+        function currentShareText() {
+            const item = quizData[currentQIndex];
+            if (!item) return '#الرخصة-المهنية_عام\nقناة الرخصة المهنية عام: ' + CHANNEL_URL;
+            const lines = [
+                '#الرخصة-المهنية_عام',
+                '📘 الرخصة المهنية عام | المعيار الأول',
+                'الالتزام بالقيم الإسلامية الوسطية، وأخلاقيات المهنة، وتعزيز الهوية الوطنية',
+                '',
+                `❓ السؤال ${item.num}: ${item.q}`,
+                ...item.options.map((choice, index) => `${index === item.correct ? "✅ " : ""}${letters[index]}) ${choice}${index === item.correct ? " ✔️ الإجابة الصحيحة" : ""}`),
+                '',
+                '━━━━━━━━━━━━━━',
+                '✍️ إعداد: إبراهيم أبوزيد | معلم ومدرب وباحث',
+                '📢 قناة الرخصة المهنية عام:',
+                CHANNEL_URL,
+                '✈️ حساب تليجرام: https://t.me/myibhistoricy',
+                '📞 واتساب / تواصل: \u200E+966 55 783 1353\u200E'
+            ];
+            return lines.join('\n');
+        }
+        function shareWhatsAppText() {
+            window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(currentShareText()), '_blank', 'noopener,noreferrer');
+        }
+        function shareTelegramText() {
+            window.open('https://t.me/share/url?url=' + encodeURIComponent(CHANNEL_URL) + '&text=' + encodeURIComponent(currentShareText()), '_blank', 'noopener,noreferrer');
+        }
+        async function copyShareMessage() {
+            const feedback = document.getElementById('share-feedback');
+            const message = currentShareText();
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(message);
+                } else {
+                    const area = document.createElement('textarea');
+                    area.value = message;
+                    area.style.cssText = 'position:fixed;left:-9999px;top:0';
+                    document.body.appendChild(area);
+                    area.focus(); area.select();
+                    const success = document.execCommand('copy');
+                    area.remove();
+                    if (!success) throw new Error('لم يسمح المتصفح بالنسخ التلقائي');
+                }
+                feedback.textContent = '✓ تم نسخ الرسالة كاملة مع الاسم والقناة ووسائل التواصل.';
+            } catch(error) {
+                feedback.textContent = 'تعذر النسخ التلقائي؛ حدّث أذونات النسخ في المتصفح.';
+            }
+        }
+        async function shareCurrentImage() {
+            const feedback = document.getElementById('share-feedback');
+            feedback.textContent = 'جارٍ تجهيز صورة البطاقة…';
+            try {
+                if (typeof html2canvas !== 'function') throw new Error('مكتبة الصور غير متاحة؛ تحقق من الإنترنت.');
+                await document.fonts.ready;
+                const canvas = await html2canvas(document.getElementById('quiz-app'), {scale:2,useCORS:true,backgroundColor:'#ffffff'});
+                const blob = await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+                const filename = `الرخصة_المهنية_عام_سؤال_${quizData[currentQIndex].num}.png`;
+                const file = new File([blob], filename, {type:'image/png'});
+                if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+                    await navigator.share({files:[file],title:'الرخصة المهنية عام'});
+                    feedback.textContent = 'تم فتح نافذة مشاركة الصورة.';
+                } else {
+                    const link=document.createElement('a');
+                    const url=URL.createObjectURL(blob);
+                    link.href=url;link.download=filename;link.click();
+                    setTimeout(()=>URL.revokeObjectURL(url),3000);
+                    feedback.textContent='تم تنزيل الصورة. أرفقها في واتساب أو تليجرام للمشاركة.';
+                }
+            } catch(e) { feedback.textContent = e.name==='AbortError' ? 'تم إلغاء المشاركة.' : 'تعذرت مشاركة الصورة: '+e.message; }
+        }
+
+        loadQuestion();
+    </script>
+
+<div id="pdf-export-root" class="pdf-export-root" dir="rtl"></div>
+</body>
+</html>
